@@ -1,0 +1,37 @@
+{
+  "name": "pts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "gulp",
+    "server": "gulp server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.15.5",
+    "@babel/eslint-parser": "^7.15.0",
+    "@babel/plugin-proposal-class-properties": "^7.14.5",
+    "@babel/plugin-proposal-decorators": "^7.14.5",
+    "@babel/plugin-proposal-function-bind": "^7.14.5",
+    "@babel/plugin-transform-modules-commonjs": "^7.15.4",
+    "@babel/preset-env": "^7.15.4",
+    "browser-sync": "^2.27.5",
+    "del": "1.1.1",
+    "eslint": "^7.15.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^8.0.0",
+    "gulp-eslint": "^6.0.0",
+    "gulp-html-replace": "^1.6.2",
+    "gulp-load-plugins": "^0.7.1",
+    "gulp-rename": "^2.0.0",
+    "gulp-sequence": "^0.4.1",
+    "through2": "^4.0.2"
+  },
+  "dependencies": {
+    "core-js": "^3.16.3"
+  }
+}
