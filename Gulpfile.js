@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-08-23 15:50:27
  * @LastEditors: sunsh
- * @LastEditTime: 2021-09-07 17:15:44
+ * @LastEditTime: 2021-09-08 11:34:40
  */
 const gulp = require('gulp');
 const del = require('del');
@@ -51,10 +51,6 @@ gulp.task('copy', function() {
     .pipe(gulp.dest('dist'));
 })
 
-gulp.task('server', cb => {
-    plugins.sequence('clean', 'eslint', 'to-es5', 'get-path', 'replace-html', 'dev', cb);
-});
-
 gulp.task('dev', function() {
     browserSync({
         server: {
@@ -62,11 +58,16 @@ gulp.task('dev', function() {
         }
     });
 
-    gulp.watch(['**/*.html', '**/*.css'], { cwd: srcPath}, ['copy']);
-    gulp.watch(['**/*.js'], { cwd: srcPath}, cb => {
-        plugins.sequence('clean', 'eslint', 'to-es5', 'get-path', 'replace-html', cb);
+    gulp.watch(['**/*.html', '**/*.js', '**/*.css'], { cwd: 'dist'}, event => {
+        console.log('watch dist change');
+        reload();
     });
-    gulp.watch(['**/*.html', '**/*.js', '**/*.css'], { cwd: 'dist'}, reload);
+    gulp.watch(['*/src/**/*.html', '*/src/**/*.css'], { cwd: 'packages'}, ['copy']);
+    gulp.watch(['*/src/**/*.js'], { cwd: 'packages'}, event => {
+        plugins.sequence('eslint', 'to-es5', 'get-path', 'replace-html')(function(err) {
+            if (err) console.log('sequence error:', err)
+        });
+    });
 });
 
 gulp.task('replace-html', () => {
@@ -99,4 +100,9 @@ gulp.task('eslint', function() {
 
 gulp.task('default', (cb) => {
     plugins.sequence('eslint', 'to-es5', cb);
+});
+
+// 入口
+gulp.task('server', cb => {
+    plugins.sequence('clean', 'eslint', 'to-es5', 'get-path', 'replace-html', 'dev', cb);
 });
