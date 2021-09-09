@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-08-30 15:38:38
  * @LastEditors: sunsh
- * @LastEditTime: 2021-09-07 16:57:16
+ * @LastEditTime: 2021-09-09 17:51:51
  */
 /* 设计模式沉思录.pdf
  * 动态语言设计模式 --Peter Norvig 1996
@@ -755,12 +755,191 @@ class File1 {
 // 何时使用组合模式？1表示对象的部分-整体层次结构2.客户希望统一对待树中的 所有 对象。
 
 
-// NOTE 模板方法模式
+// NOTE 模板方法模式: 基于继承的设计模式
+// 
 
 
+
+// NOTE 享元模式flyweight: 是一种用于性能优化的模式。
+// 核心：运用共享技术来支持大量细粒度的对象。
+
+
+// NOTE 职责链模式：类似流水线上的分拣器，一个包裹（客户请求）在流水线上传递，依次经过多个分拣器（对象），直到有一个分拣器处理它。
+
+
+// NOTE 中介者模式: 解除对象与对象间的耦合关系，增加一个中介者，所有对象通过中介联系，而不是相互引用。 
+// 实际：一个表单改变影响其他多个表单
+// 多人游戏
+class Player {
+    constructor(name, teamColor) {
+        this.name = name;
+        this.teamColor = teamColor;
+        this.state = 'alive';
+    }
+    win() {
+        console.log(this.name + 'win');
+    };
+    lose() {
+        console.log(this.name + 'lose');
+    };
+    die() {
+        this.state = "dead";
+        director.receiveMsg('playerDead', this);
+    }; // 玩家挂掉
+    remove() {
+        director.receiveMsg('removePlayer', this);
+    }; // 掉线移除
+    changeTeam() {
+        director.receiveMsg('changeTeam', this);
+    }; // 叛变
+}
+
+// 中介者：Player的原型方法不再负责执行具体逻辑，而是给中介者发送消息，由中介者执行相关操作。
+// 发布订阅模式实现director: 推模式|拉模式
+let director = (function() {
+    let operators = {}; // 操作方法
+    let players = {}; // 保存所有玩家：根据队伍保存
+
+    operators.addPlayer = function(player) {
+        // 该颜色队伍是否已经存在
+        !players[player.teamColor] && (players[player.teamColor] = []);
+        players[player.teamColor].push(player);
+    };
+    operators.playerDead = function(player) {
+        // 玩家挂掉，判断队伍里是否还有人活着，如果没有，则其他队伍所有玩家获胜
+        let { teamColor, state } = player, all_dead = true;
+        players[teamColor].forEach(member => {
+            if (member.state !== 'dead') {
+                all_dead = false;
+            }
+        });
+
+        if (all_dead === true) {
+            players[teamColor].forEach(member => {
+                member.lose();
+            });
+            console.log('本队所有玩家挂掉');
+            for (const color in players) {
+               if (color !== teamColor) {
+                   players[color].forEach(member => {
+                       member.win();
+                   });
+               }
+            }
+            console.log('我们赢了');
+        }
+        
+    };
+    operators.removePlayer = function(player) {
+        //···
+    };
+    operators.changeTeam = function(player) {
+        // 先在原队伍删除，再在新队伍插入该player
+    };
+
+
+    return {
+        receiveMsg: function() {
+            let msgType = [].shift.apply(arguments);
+            operators[msgType].apply(this, arguments);
+        }
+    }
+})();
+
+// 新建玩家
+let playerFactory = function(name, teamColor) {
+    let player = new Player(name, teamColor);
+    director.receiveMsg('addPlayer', player);
+
+    return player;
+}
+
+let players = [playerFactory('小红', 'red'),playerFactory('小红1', 'red')],
+    players1 = [playerFactory('小黑', 'blk'),playerFactory('小黑1', 'blk')];
+players.forEach(member => {member.die();});
+
+// 总结：中介者模式迎合迪米特法则（最少知识原则：一个对象尽可能少的了解另外一个对象：不和陌生人说话）
+// 以一对多的关系取代多对多的网状关系。
+// 缺点：增加一个中介者对象，对象间的复杂性转移到了中介者的复杂性上。
+// 如果对象间的关系呈指数级增长，可以考虑用中介者模式。
+
+
+// NOTE 装饰者模式: 可以动态给对象添加额外的职责，而不影响从这个类中派生出的其他对象
+// JS动态改变对象比较容易，可以直接改变对象或者对象上的方法。
+let dec = {a:function(){
+    console.log('基本操作')
+}}
+let decA = dec.a;
+dec.a = function() {
+    decA();  // this可能被劫持，这种方法并不保险
+    // decA.apply(dec, arguments); // 这种又不是很方便
+    console.log('在这里增加操作');
+}
+
+// 用AOP装饰函数
+let _before = function(fn, beforeFn) {
+    return function() {
+        beforeFn.apply(this, arguments); // 可以动态改变函数参数
+        return fn.apply(this, arguments);
+    }
+}
+// 插件式表单校验：分离表单校验和ajax提交函数
+// submit = _before(submit, validate);
+// 结合策略模式，就可以把校验规则携程插件的形式，用在不同的项目中。
+
+// 缺点：在原函数上保存的属性会丢失，因为返回的是一个新函数；会叠加函数的作用域，如果装饰链过长，性能也会受到一定影响。
+// 代理模式：强调proxy和实体间的关系，这种关系在一开始就可以被确定。本体定义关键功能，代理提供或拒绝对它的访问。（常只有一层）
+// 装饰者模式：为对象动态加入行为。用于一开始不能确定对象的全部功能时。（常会形成长长的装饰链）
+
+// 框架提供一些稳定而方便移植的功能，个性化的功能可以在框架之外动态装饰上去。
+
+
+// NOTE 状态模式：关键是区分事物内部的状态，内部状态的改变往往会带来事物行为的改变。
+
+// 封装总是先封装对象的行为，而不是状态。但是状态模式中刚好相反：状态模式的关键是把事物的每种状态封装成单独的类，跟次状态有关的行为被封装在这个类内部。
+// if else if else 跟随状态的增加而增加
+// 实现：状态的切换规律事先被完好定义在各个状态类中，同时状态和与之对应的行为局部化，被封装在各自对应的状态类中。
+
+
+
+
+
+
+
+
+
+
+
+
+// NOTE 适配器模式：解决两个软件实体间接口不兼容的问题 --亡羊补牢的模式
+let ali = {
+    hello: function() {}
+}
+let tencent = {
+    hi: function() {}
+}
+
+function sayHi(corporation) {
+    corporation.hi(); // 无法处理ali对象
+}
+
+// 适配器
+let adapterAli = {
+    hi: function() {
+        return ali.hello();
+    }
+};
+
+sayHi(adapterAli);
+
+// 总结： adapter跟decorator\proxy\外观模式比较：通过意图区分
+// 适配器模式： 主要用来解决两个已有接口之间不匹配的问题，它不考虑这些接口是怎样实现的，也不考虑它们将来可能会如何演化。适配器模式不需要改变已有的接口，就能够使它们协同作用。
+// decorator模式：为了给对象增加功能，常形成一条长装饰链。
+// proxy: 为了控制对 对象的访问，常包装一次。
+// 外观模式：有人看成一组对象的适配器，显著特点：定义了一个新街口。
 
 
 
 /* --------------设计原则和编程技巧------------- */
-
+// NOTE 单一职责原则
 
