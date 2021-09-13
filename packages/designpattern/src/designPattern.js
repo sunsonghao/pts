@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-08-30 15:38:38
  * @LastEditors: sunsh
- * @LastEditTime: 2021-09-10 19:18:16
+ * @LastEditTime: 2021-09-13 20:34:47
  */
 /* 设计模式沉思录.pdf
  * 动态语言设计模式 --Peter Norvig 1996
@@ -718,7 +718,6 @@ mCommand1.execute(); // 打开空调、电视、扫地机器人
 
 // 引用父对象：
 // 组合模式使用职责链时，如果从下往上冒泡传递请求，或者删除某个文件时（实际是删除父文件夹下该文件的）
-// TODO  
 class Folder {
     constructor(name) {
         this.name = name;
@@ -756,12 +755,139 @@ class File1 {
 
 
 // NOTE 模板方法模式: 基于继承的设计模式
-// 
+// 组成：抽象父类和具体实现的子类
+// 抽象父类中封装的子类算法框架，包括实现一些公共方法（分离出子类中公共方法）及子类中所有方法的执行顺序。
+// java中分为抽象类、具体类：抽象类不能实例化，用来被某些具体类继承的，可以包括抽象方法和具体方法（复用）。
+// js中没有抽象类的解决方法: js不需要兼容类型实现向上转型，但要解决继承是否实现了抽象类的某个方法：1、额外的属性检查代码2、直接在上级方法中throw new Error('直接抛出错误‘);
+class Abstract {
+    public() {
+        throw new Error('子类必须要实现我')
+    }
+    init() {
+        // 算法框架
+        step1();
+        // 如果有用户不需要step2, 如何解决这种定制化的需求呢？ 可以通过HOOk钩子函数隔离变化。
+        if (!hook()) {
+            step2();
+        }
+        step3();
+    }
+}
+// 使用：框架的搭建、ui组件的创建等 有相同的实现步骤的实践中。
+// 好莱坞原则：不要来找我，我有结果的时候会通知你：低层组件将自己挂钩到高层组件中，高层组件决定什么时候、怎么调用低层组件
+// 也可以这样实现：
+function Abstract1(param) {
+    let step1 = param.step1 || function() { throw new Errow('子类必须实现我1') }
+    let step2 = param.step2 || function() { throw new Errow('子类必须实现我2') }
+
+    let F = function() {};
+    F.prototype.init = function() {
+        step1();
+        step2();
+    }
+    return F;
+}
+
+// js中并不需要照葫芦画瓢实现该模式，高阶函数是更好的选择。
 
 
 
 // NOTE 享元模式flyweight: 是一种用于性能优化的模式。
-// 核心：运用共享技术来支持大量细粒度的对象。
+// 核心：运用共享技术来支持大量细粒度的对象。如果系统中因创建大量功能类似的对象导致内存占用过高，该模式就比较有用了。
+// 例子：男女内衣各50种，不需要生成100个模特试衣（100个对象），只需要根据性别生产男女2个模特穿衣拍照即可。
+class Model {
+    constructor(sex) {
+        // 内部状态
+        this.sex = sex;
+    }
+    takePhoto() {
+        console.log(this.set + 'underwear' + this.underwear/* 外部状态 */);
+    }
+}
+
+let male = new Model('male'); //并不是一开始就需要，可以通过工厂函数产生
+for (let index = 0; index < 50; index++) {
+    male.underwear = 'underwear' + index; // 外部状态可能相当复杂，可以通过一个状态管理器管理起来，通过钩子与共享对象联系。
+}
+// 该模式通常需要将对象的属性划分为外部状态（根据场景的变化而变化，不能被共享）和内部状态（可以被对象共享、独立于一些场景）。
+// 剥离了外部状态的对象称为共享对象，外部状态必要时传入共享对象组成一个完整的对象。通常内部状态由多少种组合，便存在多少个对象。
+
+// 比如文件上传，同时上传100个文件（100个upload）,根据文件的大小使用不同的上传方式。
+// 共享对象
+class Share { // 剥离外部状态，确定内部状态
+    constructor(innerState) {
+        this.innerState = innerState;
+    }
+    otherMethod() {
+
+    }
+}
+// 工厂函数
+function factoryOfShare() {
+    let flyweights = {};
+    return {
+        // 没有内部状态时，编程一个单例；可以没有innerState
+        create(innerState) {
+            if (flyweights[innerState]) {
+                return flyweights[innerState];
+            }
+            return flyweights[innerState] = new Share(innerState);
+        }
+    }
+}
+
+function ShareManager() {
+    let dataDB = {}; // 外部状态集合
+    return {
+        add: function(dataId, innerState) {
+            // todo
+            // ···
+            dataDB[dataId] = {a: dataId}
+            
+            let flyweight =  factoryOfShare().create(innerState);
+            return flyweight;
+        },
+        setExternalState(dataId, flyweight) {
+            let data = dataDB[dataId];
+            for (const key in data) {
+                if (Object.hasOwnProperty.call(data, key)) {
+                    // 外部状态必要时传入对象内部，组成一个完整对象
+                   flyweight[key] = data[key];
+                }
+            }
+        }
+    }
+}
+
+for (let index = 0; index < 50; index++) {
+   ShareManager().add(index, 'type'+ index % 2);
+    
+}
+// 享元模式的过程是剥离外部状态，把外部状态保存在别处，合适时组装到对象内部。
+
+// 对象池
+// 维护一个装载空闲对象的池子，如果需要对象的时候，不是直接 new，而是转从对象池里获取。如果对象池里没有空闲对象，则创建一个新的对象，
+// 当获取出的对象完成它的职责之后， 再进入池子等待被下次获取。
+
+// 数据库连接池、HTTP连接池、DOM操作
+// 通用连接池：
+var objectPoolFactory = function (createObjFn) {
+  var objectPool = [];
+  return {
+    create: function () {
+      var obj =
+        objectPool.length === 0
+          ? createObjFn.apply(this, arguments)
+          : objectPool.shift();
+      return obj;
+    },
+    recover: function (obj) {
+      objectPool.push(obj);
+    },
+  };
+}; 
+// 享元模式是为解决性能问题而生的模式，这跟大部分模式的诞生原因都不一样。在一个存在大量相似对象的系统中，享元模式可以很好地解决大量对象带来的性能问题。
+
 
 
 // NOTE 职责链模式：类似流水线上的分拣器，一个包裹（客户请求）在流水线上传递，依次经过多个分拣器（对象），直到有一个分拣器处理它。
@@ -899,15 +1025,174 @@ let _before = function(fn, beforeFn) {
 // 封装总是先封装对象的行为，而不是状态。但是状态模式中刚好相反：状态模式的关键是把事物的每种状态封装成单独的类，跟次状态有关的行为被封装在这个类内部。
 // if else if else 跟随状态的增加而增加
 // 实现：状态的切换规律事先被完好定义在各个状态类中，同时状态和与之对应的行为局部化，被封装在各自对应的状态类中。
+// 状态类
+class On {
+    constructor(main) {
+        this.main = main;
+    }
 
+    changeState() {
+        this.main.setState(this.main.offState);
+    }
+}
+class Off {
+    constructor(main) {
+        this.main = main;
+    }
 
+    changeState() {
+        this.main.setState(this.main.onState);
+    }
+}
+// 主类
+class Main {
+    constructor() {
+        // 统一维护状态对象，并保存main当前的状态currentState
+        this.onState = new On(this);
+        this.offState = new Off(this);
+        this.currentState = this.offState; // default state
+    }
 
+    setState(state) {
+        this.currentState = state;
+    }
 
+    click() {
+        this.currentState.changeState();
+    }
+}
+// 以上问题： 好的是状态更加丰满， 不好的状态逻辑重复(缺少抽象类)，状态改变的顺序固定。A->B->A
 
+// 更复杂的文件上传状态：暂停按钮A和删除按钮B
+// 文件扫描 !A&&!B 既不能暂停也不能删除
+// 扫描完成：根据文件MD5判断，若服务器存在直接 上传完成；文件超大或者损坏（怎么判断损坏 TODO ） 上传失败；其他 上传中。
+// 上传中：点A暂停或者恢复。
+// 暂停状态: 允许B
+// 上传完成: 允许B
+// 上传失败：允许B
 
+// 用于上传的插件对象 document.createElement('embed); // 不建议用embed
+// 状态类的基类
+class Base {
+    constructor(main, ...args) {
+        this.context = main;
+        Object.assign(this.constructor.prototype, args || {});
+    }
 
+    clickHandle1() { // 暂停
+        throw new Error('子类必须继承父类的clickHandle1方法');
+    }
+    clickHandle2() { // 删除
+        throw new Error('子类必须继承父类的clickHandle2方法');
+    }
+}
 
+// 扫描状态
+class Sign extends Base {
+    clickHandle1() { // 暂停
+        console.log('扫描中，点击无效')
+    }
+    clickHandle2() { // 删除
+        console.log('上传中，不能删除');
+    }
+}
+class Upload extends Base {
+    clickHandle1() { // 暂停
+        this.context.pause();
+    }
+    clickHandle2() { // 删除
+        console.log('上传中，不能删除');
+    }
+}
+class Pause extends Base {
+    clickHandle1() { // 恢复上传
+        this.context.uploading();
+    }
+    clickHandle2() { // 删除
+        console.log('这里是删除操作');
+        // this.context.delete(); // 不再实现了
+    }
+}
 
+class Ctx {
+    constructor() {
+        this.signState = new Sign(this);
+        this.uploadState = new Upload(this);
+        this.pauseState = new Pause(this);
+        this.currentState = this.signState;
+    }
+
+    sign() {
+        console.log('扫描中')
+        this.currentState = this.signState;
+        // 额外操作等等
+    }
+    uploading() {
+        console.log('上传中')
+        this.currentState = this.uploadState;
+        // 额外操作等等
+    }
+    pause() {
+        this.currentState = this.pauseState;
+        // 额外操作等等
+    }
+    // ···
+}
+// 状态分散，定义了许多状态类，无法再一个地方看出整个状态机的逻辑。
+// 性能：state对象如果比较大可以在需要的时候才创建，如果状态改变频繁则最好一开始就创建好。
+// 状态模式和策略模式比较像：只是策略模式中各策略是鹏等的关系，之间没有任何联系。
+// 状态的改变 发生在状态对象内部，客户并不需要了解这些细节。
+/* 以上两种都是OOP形式的实现：
+为每种状态都定义一个状态子类，然后在 Context 中持有这些状态对象的引用，以便把 currState 设置为当前的状态对象 */
+
+/* js版本的状态机 */
+// js中状态对象可以直接来，不用非要像OOP中对象从类中来，因此可以很方便委托给FSM处理不同状态
+// 改进第一个Main
+let FSM = {
+    off: {
+        click: function() {
+            this.currentState = FSM.on;
+            console.log('turn on');
+        }
+        // ···
+    },
+    on: {
+        click: function() {
+            this.currentState = FSM.off;
+            console.log('turn off');
+        }
+    }
+};
+class Main1 {
+    constructor() {
+        this.currentState = FSM.off;
+    }
+    click() {
+        this.currentState.click.call(this);
+    }
+}
+// or: 抛开灯泡的例子思考：文件上传例子
+class Main2 {
+    constructor() {
+        this.offState = delegate(this, FSM.off);
+        this.onState = delegate(this, FSM.on);
+        this.currentState = this.offState;
+    }
+    click() {
+        this.currentState.click();
+    }
+}
+function delegate(client, delegation) {
+    return {
+        click() {
+            return delegation.click.apply(client, arguments);
+        }
+    }
+}
+
+/* 表驱动的有限状态机：基于状态表的 */
+// https://github.com/jakesgordon/javascript-state-machine
+// 实践：按钮的不同状态、ajax的不同状态
 
 
 
