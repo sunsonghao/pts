@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-08-23 15:50:27
  * @LastEditors: sunsh
- * @LastEditTime: 2021-09-08 11:34:40
+ * @LastEditTime: 2021-09-14 17:38:28
  */
 const gulp = require('gulp');
 const del = require('del');
@@ -23,18 +23,26 @@ const through2 = require('through2');
 
 const srcPath = path.join(__dirname, 'packages/*/src');
 
-let jsPath = [];
+let jsPath = [], cssPath = [];
 gulp.task('get-path', function() {
     jsPath.length = 0;
     
     // return是为了用来支持异步操作.on
-    return gulp.src('./dist/**/*.js')
+    return gulp.src(['./dist/**/*.js', './dist/**/*.css'])
     .pipe(through2.obj(function (chunk, enc, callback) {
         this.push(chunk.path.split('dist')[1])
         callback()
     }))
     .on('data', (data) => {
-        jsPath.push(data.split(path.sep).join('/').trim())
+        let path1 = data.split(path.sep).join('/').trim();
+        let extname = path.extname(path1);
+        if (extname === '.js') {
+            jsPath.push(path1);
+        } else if (extname === '.css'){
+            cssPath.push(path1);
+        } else {
+
+        }
     })
     .on('end', () => {
     })
@@ -60,6 +68,13 @@ gulp.task('dev', function() {
 
     gulp.watch(['**/*.html', '**/*.js', '**/*.css'], { cwd: 'dist'}, event => {
         console.log('watch dist change');
+        // index.html中生成新的style链接
+        if (path.extname(event.path) === '.css') {
+            plugins.sequence('get-path', 'replace-html', function() {
+                reload();
+            });
+            return;
+        }
         reload();
     });
     gulp.watch(['*/src/**/*.html', '*/src/**/*.css'], { cwd: 'packages'}, ['copy']);
@@ -76,6 +91,10 @@ gulp.task('replace-html', () => {
         js: {
             src: jsPath,
             tpl: '<script src="%s"></script>'
+        },
+        css: {
+            src: cssPath,
+            tpl: '<style src="%s"></style>'
         }
     }))
     .pipe(rename('index.html'))
