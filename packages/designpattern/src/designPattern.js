@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-08-30 15:38:38
  * @LastEditors: sunsh
- * @LastEditTime: 2021-09-13 20:34:47
+ * @LastEditTime: 2021-09-14 13:05:49
  */
 /* 设计模式沉思录.pdf
  * 动态语言设计模式 --Peter Norvig 1996
@@ -891,6 +891,96 @@ var objectPoolFactory = function (createObjFn) {
 
 
 // NOTE 职责链模式：类似流水线上的分拣器，一个包裹（客户请求）在流水线上传递，依次经过多个分拣器（对象），直到有一个分拣器处理它。
+// 优点：避免请求的发送者和接收者之间的耦合关系，发送者只需要知道链（处理请求的对象连成的一条链）中的第一个节点即可。
+// 实际开发：外卖平台满减优惠：满100减10， 满60减5块，满20减免配送费，满减和折扣不能同时使用，平常又是一串if else if else
+
+// 灵活可拆分的链条，避免在上一个节点函数直接指定调用下一个节点函数的名字（传递请求代码被耦合在业务之中）
+class ChainNode {
+    constructor(nodeFn) {
+        this.nodeFn = nodeFn;
+        // next node
+        this.next = null;
+    }
+
+    setNextNode(next) {
+        return this.next = next;
+    }
+
+    // 向下传递请求
+    passRequest(...args) {
+        let ret = this.nodeFn.apply(this, args);
+        // 根据同步的结果，执行下一个节点。如果是异步，不知道什么时候返回ret，就需要在异步完成后手动执行下一个，参见next
+        if (ret === 'execNext') {
+            return this.next?.passRequest.apply(this.next, arguments);
+        }
+        return ret;
+    }
+    next() {
+        return this.next?.passRequest.apply(this.next, arguments);
+    }
+}
+
+// 节点函数定义
+function amount100(amount) {
+    if (amount >= 100) {
+        console.log('满100减10块');
+        return amount -= 10;
+    }
+    return 'execNext';
+}
+function amount50(amount) {
+    if (amount >= 50 && amount < 100) {
+        console.log('满50减5块');
+        return amount -= 5;
+    }
+    return 'execNext';
+}
+function amount20(amount) {
+    if (amount >= 20 && amount < 50) {
+        console.log('减2块运费');
+        return amount -= 2;
+    }
+    console.log('没有满减')
+    return amount;
+}
+
+function asyncAmount(amount) {
+    setTimeout(() => {
+        // 手动向下走, 可以思考下generator函数的实现
+        this.next();
+    }, 1000);
+}
+// 构建chain的节点，并连接起来
+let chainAmount100 = new ChainNode(amount100);
+let asyncAmount1 = new ChainNode(asyncAmount);
+let chainAmount50 = new ChainNode(amount50);
+let chainAmount20 = new ChainNode(amount20);
+
+chainAmount100.setNextNode(asyncAmount1);
+asyncAmount1.setNextNode(chainAmount50);
+chainAmount50.setNextNode(chainAmount20);
+
+chainAmount100.passRequest(80);
+chainAmount100.passRequest(200);
+chainAmount100.passRequest(10);
+// 可以灵活再增加节点，只需要知道第一个节点即可。但是需要一个兜底的函数保证请求能被处理。同时增加了节点对象，要避免过长的链带来的性能损耗。
+
+// 利用AOP实现
+Function.prototype.after = function(fn) {
+    let _this = this;
+    return function() {
+        let ret = _this.apply(this, arguments);
+        if (ret === 'execNext') {
+            return fn.apply(this, arguments);
+        }
+        return ret;
+    }
+}
+let order = amount100.after(amount50).after(amount20);
+order(300);
+// 30s_project
+// 作用域链、原型链、DOM节点的事件冒泡，都能从中看到职责链模式的存在。
+// 可以和组合模式结合，连接部件和父部件。
 
 
 // NOTE 中介者模式: 解除对象与对象间的耦合关系，增加一个中介者，所有对象通过中介联系，而不是相互引用。 
