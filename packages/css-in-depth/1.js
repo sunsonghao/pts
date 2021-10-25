@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-10-19 14:40:37
  * @LastEditors: sunsh
- * @LastEditTime: 2021-10-25 19:37:22
+ * @LastEditTime: 2021-10-26 01:32:43
  */
 cont NOTE = `
 /* 第一章 层叠、优先级和继承 */
@@ -48,18 +48,129 @@ initial, 重置为默认值，通常用于撤销一个样式。auto,normal不是
 
 /* 第二章 相对单位 */
 // https://zhuanlan.zhihu.com/p/44553199 你真的了解css像素吗？
+css的后期绑定late-binding 使一个样式表可以作用股多个网页，用户还可以直接改变渲染结果。
 
-em的副作用,用在字号上很难驾驭了font-size:.8em, 是相对父级字体大小x0.8，解决 ul ul { font-size: .8em;}
-解决：rem： root em的缩写
+智能手机出现->响应式设计->css需要抽象性->相对单位的出现。
+CSS会根据浏览器、操作系统、硬件适当的缩放，通常96px等于一物理英寸。
 
+1.em
+.padding { padding: 1em; }
+1em浏览器将其乘以字号，最终渲染为16px。// 16px称为计算值
+medium关键字的值是16px.
+
+em同时用于字号和其他属性时的坑：字号继承值 X em单位，得到当前字号，再换算其他属性。
+em用于嵌套的多级列表，会导致字号不一致。
+em用在内边距、外边距以及元素大小上很好，但是用在字号上就会很复杂
+
+2.rem
+root em的缩写
 :root 相当于 html选择器
-
 拿不准的时候，用rem设置字号，用px设置边框，用em设置其他大部分属性。
 
-calc
+// 反模式
+html {
+    font-size: .625em; //默认的16px缩小为10px, 反模式，像素化思维，不推荐
+}
+1）以上做法被迫写很多代码，10px太小，14px的地方都要写成1.4em,修改麻烦
+2）还是像素化思维，写的1.4em,心里想的是14px.要习惯模糊值。
 
-line-height
+// 设置一个合理的默认字号：14px/16px = 0.875em;
+// 缩放组件
+.button {
+    font-size: 1rem;
+    padding: 1em;
+    border: 1px solid red;
+    border-radius: 0.5em;
+}
+.button h2 {
+    font-size: 0.8em; // 字号相对于父级
+    。。。
+}
+.button.large {
+    font-size: 1.2rem; // 一行搞定缩放
+}
+button.small {
+    font-size: 0.8rem;
+}
 
-自定义属性-css变量：--xxxx, var(var, copyValue),真正的意义在于层叠和继承，实时切换网站主题等
+3.视口相对单位vw、vh、vmim、vmax
+用vw设置字号：元素能够在两种大小设备间平滑过渡。font-size: 2vw;
+calc()定义字号可以让vw定义字号的极端情况更加缓和。iphone上字体可能变成7.5px太小。
+calc()函数内可以对两个及其以上的值进行基本运算。当要结合不同单位的值时，calc()特别实用。
+:root {
+    font-size: calc(0.5em + 1vw); // 不用媒体查询就实现了大部分的响应式策略
+}
+
+/* :root {          （以下3行）作用到所有的屏幕，但是在大屏上会被覆盖
+font-size: 0.75em;   
+}                      
+
+@media (min-width: 800px) {   （以下5行）仅作用到宽度800px及其以上的屏幕，覆盖之前的值
+:root {                     
+    font-size: 0.875em;       
+}                           
+}                             
+
+@media (min-width: 1200px) {  （以下5行）仅作用到宽度1200px及其以上的屏幕，覆盖前面两个值
+:root {                      
+    font-size: 1em;           
+}                            
+} */
+
+4.无单位数值和行高
+一个无单位的0只能用于长度值和百分比，比如内边距、边框和宽度等，而不能用于角度值，比如度，或者时间相关的值
+line-height(fontsize X 数值)它的值既可以有单位也可以无单位。
+
+5.
+自定义属性-css变量：--xxxx, var(var, copyValue),真正的意义在于能够层叠和继承，不是简单的变量复用，实时切换网站主题等
+
+// 动态改变自定义属性
+:root {
+    --main-bg: #fff;      （以下2行）分别将背景色和文字颜色变量定义为白色和黑色
+    --main-color: #000;   
+  }
+  
+  .panel {
+    font-size: 1rem;
+    padding: 1em;
+    border: 1px solid #999;
+    border-radius: 0.5em;
+    background-color: var(--main-bg);    （以下2行）在面板样式中使用变量
+    color: var(--main-color);             
+  }
+  
+  .panel > h2 {
+    margin-top: 0;
+    font-size: 0.8em;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+// 真正所在
+  .dark {
+    margin-top: 2em;   ←---- 给深色容器和前面的面板之间加上外边距
+    padding: 1em;         
+  
+    background-color: #999;    ←---- 给深色容器加上深灰色背景
+    --main-bg: #333;      （以下2行）在容器内重定义--main-bg和--main-color变量
+    --main-color: #fff;    
+  }
+
+
+//   使用js改变自定义属性
+let html = document.documentElement;
+let styles = getComputedStyle(html); // styles对象
+styles.getPropertyValue('--main-bg); // ←-- 获取styles对象的--main-bg值
+或者 利用这种技术，就可以用JavaScript实时切换网站主题，或者在网页中突出显示某些元素，或者实时改变任意多个元素
+html.style.setProperty('--main-bg', '#cdf');  ←---- 将根元素上的--main-bg设置为浅蓝色
+
+// 拥抱相对单位，让网页的结构决定样式的含义。
+// 建议用rem设置字号，但是有选择地用em实现网页组件的简单缩放。
+// 不用媒体查询也能让整个网页响应式缩放。
+// 使用无单位的值设置行高。
+// 请开始熟悉CSS的一个新特性：自定义属性。
+
+
+
+/* 第3章 盒模型 */
 
 `;

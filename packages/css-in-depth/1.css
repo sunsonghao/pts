@@ -1,3 +1,7 @@
 .inline-block {
     background-color: blue!important;
 }
+
+.em {
+    padding: 1em;
+}
