@@ -1,7 +1,56 @@
 .inline-block {
-    background-color: blue!important;
+    background-color: gray!important;
 }
 
+/* 全局border-box */
+:root {
+    font-size: 0.875em; /* 14px/16px, 1rem: root em, = 14px */
+    font-size: calc(0.5em + 1vw); /* 不支持calc时，回退到上面的font-size */
+    box-sizing: border-box;
+} 
+/* 新开发页面, 全局设置box-sizing */
+*，
+::after,
+::before {
+    box-sizing: inherit;
+}
+/* 为了不影响第三方库的box-sizing */
+.third-lib-root-element {
+    box-sizing: initial;
+}
+
+/* 相对单位 */
+/* 通常组件font-size用rem, padding用em, border用px */
 .em {
+    width: 50rem; /* 700px */
+    font-size: .857rem; /* 12px */
     padding: 1em;
+    border: 1px solid green;
+}
+.em-inner {
+    font-size: 0.8em; /* 相对于父级12px缩小0.8 */
+}
+/* 给组件添加class，层叠font-size, 实现组件大、中、小等的实时切换 */
+.em.large {
+    font-size: 1rem;
+}
+.em.small {
+    font-size: 0.8rem;
+}
+
+/* 表格布局 */
+.css-table {
+    display: table;
+    border-spacing: 1em 0; /* 最外侧border也会有spacing, 可以加父容器并设置负外边距 */
+}
+.css-table-cell {
+    display: table-cell;
+    border: 1px solid red;
+    width: 20px;
+    margin-left: 10px; /* 不会生效 */
+}
+
+/* owl猫头鹰选择器 */
+.owl-selector > * + * {
+    margin-top: 1em;
 }
