@@ -176,3 +176,17 @@ body {
 .column-11 { width: 91.6667% }
 .column-12 { width: 100%; }
 
+
+/* flex布局 */
+.flex-box {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.flex-box > li + li {
+    margin-left: 1em;
+}
+.flex-box >li:last-child {
+    margin-left: auto; /* 填充左侧空间,把最后一个推到最右边 */
+}
