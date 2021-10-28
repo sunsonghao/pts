@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-10-19 14:40:29
  * @LastEditors: sunsh
- * @LastEditTime: 2021-10-27 19:03:54
+ * @LastEditTime: 2021-10-28 17:04:05
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -15,37 +15,79 @@
     <link rel="stylesheet" href="./1.css">
 </head>
 <body>
-    <h4>“只需一分钟就能学会，却要用一辈子的时间去精通”</h4>
-    <div>不是编程语言，却要求抽象思维。它不是纯粹的设计工具，却要求创造力。</div>
-    <div class="inline-block" style="background-color: red;">测试行内样式 < 样式表中样式加important优先级</div>
+    <div class="container">
+        <h4>“只需一分钟就能学会，却要用一辈子的时间去精通”</h4>
+        <div>不是编程语言，却要求抽象思维。它不是纯粹的设计工具，却要求创造力。</div>
+        <div class="inline-block" style="background-color: red;">测试行内样式 < 样式表中样式加important优先级</div>
+        
+        <section class="em">
+            相对单位
+            <div class="em-inner">em的子元素</div>
+        </section>
+        <div class="third-lib-root-element">我是第三方库根元素，请查看css中box-sizing的配置</div>
+
+        <div class="css-table-wrapper">
+            <ul class="css-table">
+                <li class="css-table-cell">我用来撑开高度，让别的li跟我同高高高高高宫傲公安公安高高</li>
+                <li class="css-table-cell">我是为了看dispaly: table-cell;垂直居中效果</li>
+                <li class="css-table-cell">css-table-wrapper设置负外边距，出现滚动条</li>
+                <li class="css-table-cell"></li>
+                <li class="css-table-cell"></li>
+                <li class="css-table-cell"></li>
+                <li class="css-table-cell"></li>
+                <li class="css-table-cell"></li>
+                <li class="css-table-cell"></li>
+                <li class="css-table-cell"></li>
+            </ul>
+        </div>
+
+        <div class="margin margin1">测试负外边距</div>
+        <div class="margin margin2">负外边距折叠</div>
+        <div class="margin3">底部元素</div>
+        <div class="margin4">底部元素1</div>
+
+        <div class="empty" style="margin: 14px 0 24px; outline: 1px dashed purple;"></div>
+
+        <div class="owl-selector">
+            <div>猫头鹰选择器</div>
+            <div>sub2</div>
+            <div>sub3</div>
+            <div>sub4</div>
+            <div>sub5</div>
+        </div>
+
+        <h3>第二部分 精通布局</h3>
+        <div class="float">我是float元素</div>
+        <p class="float-help">
+            <span>
+            ||为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动为了查看浮动的效果，浮动浮动
+            </span>
+        </p>
+        <strong>float效果图：</strong>
+        <img style="vertical-align: middle;" src="./img/float.png" alt="float效果图">
+        <div><strong>一个容器内的浮动元素会扩展到另一个容器，这样两个容器的文字就能围绕浮动元素排列（虚线高亮的部分是容器）</strong></div>
+
+        <div class="float-wrapper">
+            <div class="float-margin-top">我不是浮动元素</div>
+            <div class="float-ele">我是浮动元素1我是浮动元素1我是浮动元素1我是浮动元素1我是浮动元素1我是浮动元素1我是浮动元素1</div>
+            <div class="float-ele">我是浮动元素2</div>
+            <div class="float-ele">我是浮动元素3</div>
+            <div class="float-ele">我是浮动元素4</div>
+            <!-- <div style="clear: both;">clear:both,让该元素移动到浮动元素的下面，由于该元素不是float元素，因此父元素会延伸到该元素下面</div> -->
+        </div>
     
-    <section class="em">
-        相对单位
-        <div class="em-inner">em的子元素</div>
-    </section>
-    <div class="third-lib-root-element">我是第三方库根元素，请查看css中box-sizing的配置</div>
-
-    <ul class="css-table">
-        <li class="css-table-cell">我用来撑开高度，让别的li跟我同高</li>
-        <li class="css-table-cell"></li>
-        <li class="css-table-cell"></li>
-        <li class="css-table-cell"></li>
-        <li class="css-table-cell"></li>
-        <li class="css-table-cell"></li>
-        <li class="css-table-cell"></li>
-        <li class="css-table-cell"></li>
-        <li class="css-table-cell"></li>
-        <li class="css-table-cell"></li>
-    </ul>
-
-    <div style="margin: 14px 0;"></div>
-
-    <div class="owl-selector">
-        <div>sub1</div>
-        <div>sub2</div>
-        <div>sub3</div>
-        <div>sub4</div>
-        <div>sub5</div>
+        <div class="row">
+            <div class="column-1">1</div>
+            <div class="column-1">2</div>
+            <div class="column-10">3~12</div>
+        </div>
+        <div class="row">
+            <div class="column-10">3~12</div>
+            <div class="column-1">1</div>
+            <div class="column-1">2</div>
+        </div>
+    
+    
     </div>
 </body>
 </html>

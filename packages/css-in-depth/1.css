@@ -9,14 +9,14 @@
     box-sizing: border-box;
 } 
 /* 新开发页面, 全局设置box-sizing */
-*，
+*,
 ::after,
 ::before {
     box-sizing: inherit;
 }
 /* 为了不影响第三方库的box-sizing */
 .third-lib-root-element {
-    box-sizing: initial;
+    box-sizing: content-box; /* 盒模型不继承，但是上面设置* box-sizing:inherit;强制继承，因此组件内的元素继承根元素的content-box */
 }
 
 /* 相对单位 */
@@ -39,18 +39,140 @@
 }
 
 /* 表格布局 */
+.css-table-wrapper {
+    margin: 0 -1em; /* 为了抵消子级的border-spacing， 里面对齐是对齐了但是会拉长该元素本身，可能出现滚动条*/
+}
 .css-table {
-    display: table;
+    padding: 0;
+    display: table; /* 好好理解一下table布局 */
+    table-layout: fixed;/* 表格和列的宽度通过表格的宽度来设置，某一列的宽度仅由该列首行的单元格决定。在当前列中，该单元格所在行之后的行并不会影响整个列宽。加快表格渲染 */
+    width: 100%; /* table默认不会占据一行的宽度 */
     border-spacing: 1em 0; /* 最外侧border也会有spacing, 可以加父容器并设置负外边距 */
 }
 .css-table-cell {
     display: table-cell;
     border: 1px solid red;
-    width: 20px;
+    width: 60px;
     margin-left: 10px; /* 不会生效 */
+    vertical-align: middle;
+}
+
+/* 负外边距效果 */
+.margin {
+    display: inline;
+}
+.margin1 {
+    border: 2px solid blueviolet;
+    /* margin-right: -1em; 右侧的margin2压着左侧的margin1 */
+}
+.margin2 {
+    border: 2px solid red;
+    /* margin-left: -1em; 还是margin2压着margin1元素 */
+}
+.margin3 {
+    /* margin-top: -1em; 覆盖上面的 */
+    border: 1px solid greenyellow;
+    margin-bottom: -1em; /* margin4覆盖该元素 */
 }
 
 /* owl猫头鹰选择器 */
+.owl-selector {
+    border: 1px solid black
+}
 .owl-selector > * + * {
     margin-top: 1em;
 }
+
+
+
+/* 第二部分 精通布局 */
+/* 浮动 */
+html, body {
+    height: 100%;
+}
+/* 双容器模式，将网页内容居中 */
+body {
+    background-color: gray;
+    margin: 0;
+}
+.container {
+    background-color: #fff;
+    max-width: 1600px; /* 大于1000px的屏幕，左右出现留白，小于1000时填满整个屏幕 */
+    margin: 0 auto;
+    overflow: hidden; /* 防止上下margin溢出 */
+    min-height: 100%;
+}
+/* 双容器模式结束 */
+.float {
+    float: left;
+    height: 100px;
+    border: 1px solid yellow;
+}
+.float-help {
+    border: 1px solid blue;
+    overflow: hidden; /* 创建BFC，不会与.float重叠。display:inline-blcok,float,会使该元素的width变为100%，导致换行。 */
+}
+.float-wrapper {
+    background-color: lightskyblue;
+}
+.float-margin-top {
+    margin-top: 1em; /* 突破父级 */
+    border: 1px solid lightcoral;
+}
+.float-ele {
+    float: left;
+    width: 50%;
+    margin-top: 3em;
+}
+/* 清浮动 */
+.float-wrapper::after {
+    /* 非浮动元素外边距折叠，浮动元素外边距不会折叠到容器的外部 */
+    display: block; /* 将伪元素的display设置为非inline，并给定一个content值，以便让伪元素出现在文档中 */
+    content: " "; /* 空格解决opera的bug */
+    clear: both;
+}
+/* 清浮动，改进版，不折叠非浮动元素外边距 */
+.float-wrapper::before,
+.float-wrapper::after {
+    /* 非浮动元素外边距被阻止折叠 */
+    display: table; /* 外边距无法通过单元格元素折叠 ，或者table-cell, 但是table-cell不是block元素，clear：both只对block元素生效*/
+    content: " "; /* 空格解决opera的bug */
+}
+.float-wrapper::after {
+    clear: both;
+}
+
+/* 浮动陷阱 */
+.float-ele:nth-child(2n) {
+    clear: left; /* 该元素移动到浮动元素的右边，放不下了，换行 */
+}
+
+/* 利用float实现的网格系统 */
+.row {
+    margin-left: -0.75em;
+    margin-right: -0.75em; /* 抵消首尾列的padding空白 */
+}
+.row::after {
+    content: " ";
+    display: block;
+    clear: both;
+}
+
+[class*="column-"] {
+    float: left;
+    padding: 0 0.75em;
+    margin-top: 0;
+}
+.column-1 { width: 8.3333%; }
+.column-2 { width: 16.6667%; }
+.column-3 { width: 25%; }
+.column-4 { width: 33.3333%; }
+.column-5 { width: 41.6667%; }
+.column-6 { width: 50%; }
+.column-7 { width: 58.3333%; }
+.column-8 { width: 66.6667%; }
+.column-9 { width: 75%; }
+.column-10 { width: 83.3333%; }
+.column-11 { width: 91.6667% }
+.column-12 { width: 100%; }
+
