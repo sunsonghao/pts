@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-10-19 14:40:37
  * @LastEditors: sunsh
- * @LastEditTime: 2021-10-28 19:35:59
+ * @LastEditTime: 2021-10-29 16:49:10
  */
 cont NOTE = `
 /* -----------------------------------------------------------第一部分 基础----------------------------------------------------------- */
@@ -339,21 +339,43 @@ position：absolute或position: fixed。
 // Autoprefixer 添加css前缀
 行内元素，给父元素贡献的高度会根据行高计算，而不是根据内边距和内容。
 
-1.更棒的是，Flexbox允许使用margin: auto来填充弹性 子元素之间 的可用空间;
+1.更棒的是，Flexbox允许使用margin: auto来填充弹性 子元素之间 的可用空间; 见css flex布局
 2.弹性子元素的大小
-flex-basis: 
+flex-basis: 定义项目的基准大小（初始main-siz）,即 在分配多余空间前 的占主轴的main-size。
+    flex-basis: auto; // 自动尺寸，main-size成了“参照我的width,height属性”，如果没有width则用元素自身内容大小。
+    flex-basis: 非auto， 同时设置了width(主轴column, height), 那么flex-basis优先级更高，即忽略width。
+    每个弹性子元素的 初始主尺寸确定 后，浏览器根据这个属性，计算主轴是否有多余空间。它们可能需要在主轴方向扩大或者缩小来适应（或者填充）弹性容器的大小。这时候就需要flex-grow和flex-shrink来决定缩放的规则。
 
+flex简写的不同：
+与大部分简写属性不一样，如果在flex中忽略某个子属性，那么子属性的值并不会被置为初始值（0 1 auto）。相反，如果某个子属性被省略，那么flex简写属性会给出有用的默认值：flex-grow为1、flex-shrink为1、flex-basis为0%。
+这些默认值正是大多数情况下所需要的值。可以在浏览器查看元素的computed面板中查看。
 
+flex-grow: 0; // 宽度不会超过flex-basis的值, 前提是内容宽度不会超过basis,否则由内容撑开。
+flex-shrink,
+flex: none(0 0 auto), auto(1 1 auto)， 默认0 1 auto, 不写的按1 1 0%补充。
 
+// 参见css, 设置完flex后设置width:0(小于basis的值)防止文字溢出，或者设置max-width。
 
+3. 对齐、间距
+align-content
+如果开启了flex-wrap，align-content就会控制弹性子元素在副轴上的间距。如果子元素没有换行，就会忽略align-content
 
+order
+整数，将弹性子元素从兄弟节点中移动到指定位置，覆盖源码顺序。谨慎使用：Tab键浏览元素的顺序与源码保持一致。
 
+4.flex需要注意的地方
+Flex兼容性问题见flexbugs: https://github.com/philipwalton/flexbugs
+整页布局
+《Don't use flexbox for overall page layout》
+一行多列会出现问题，一列多行没问题（flex-direction:column;）
 
-
-
-
-
-
+总结：
+    使用Flexbox实现灵活易操作的网页内容布局。
+    Autoprefixer可以简化Flexbox对旧版浏览器的支持。
+    使用flex指定任何能想到的弹性子元素大小的组合。
+    使用嵌套的弹性盒子来组成复杂的布局，以及填满自适应大小的盒子的高度。
+    Flexbox自动地创建等高的列。
+    使用align-items和align-self让一个弹性子元素在弹性容器中垂直居中。
 
 
 

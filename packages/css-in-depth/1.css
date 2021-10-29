@@ -14,6 +14,11 @@
 ::before {
     box-sizing: inherit;
 }
+ul,li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
 /* 为了不影响第三方库的box-sizing */
 .third-lib-root-element {
     box-sizing: content-box; /* 盒模型不继承，但是上面设置* box-sizing:inherit;强制继承，因此组件内的元素继承根元素的content-box */
@@ -189,4 +194,41 @@ body {
 }
 .flex-box >li:last-child {
     margin-left: auto; /* 填充左侧空间,把最后一个推到最右边 */
+}
+
+.flex-box-empty {
+    display: flex;
+    min-height: 30px;
+    border: 1px solid red;
+    padding: 2px;
+}
+.flex-box-empty > li {
+    flex: 1 1 40%;
+    border: 1px solid #0090c9;
+}
+
+.flex-box-hascontent {
+    border: 1px solid red;
+    width: 100px;
+    height: 200px;
+    padding: 2px;
+    margin: 10px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.flex-box-hascontent > li {
+    border: 1px solid skyblue;
+    flex: 1 1 30px; /* 总和超过100px,要收缩，收缩不会小于内容（英文不换行，汉字一个一换行）的大小，此时会溢出 */
+    /* 或者flex: 30px; */
+    /* max-width: 25%; 防止内容撑开宽度 */
+    /* width: 0px; // 防止内容撑开宽度， 如果容器空间不足，则会收缩（收缩到不再溢出）,此时对超出的元素指定了width，
+                // 如果收缩过程中容器空间够了，则停止收缩到合适的宽度，不一定是width宽度
+                // 如果收缩到width时空间仍然不够，则停止在width宽度的位置。 
+                */
+}
+
+.login-input {
+    display: block; /* input宽度由size决定，大致能容纳的字符数，因此要加上width占据一行 */
+    width: 100%;
 }
