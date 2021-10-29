@@ -232,3 +232,77 @@ body {
     display: block; /* input宽度由size决定，大致能容纳的字符数，因此要加上width占据一行 */
     width: 100%;
 }
+
+
+/* 网格布局 */
+.grid {
+    display: grid;
+    grid-template-rows: 200px 1fr; /* fraction,分数单位，类似flex-grow的因子 */
+    grid-template-columns: 1fr 1fr 1fr; /* 3等宽列 */
+    grid-gap: 0.5em;
+}
+.grid > * {
+    border: 1px solid blue;
+}
+
+.grid-container {
+    display: grid;
+    /* 声明网格轨道 */
+    grid-template-rows: 1fr 1fr repeat(2, [row] 4fr); /* 关键字auto: 由内容撑开 */
+    grid-template-columns: [start] 2fr [center] 1fr [end right-start]; /* []里面是分割网格轨道的 网格线名称 多网格线名称 */
+    grid-gap: 0.5em;
+}
+.grid-container > * {
+    background-color: aqua;
+}
+.grid-container header,
+.grid-container nav {
+    grid-column: 1 / right-start; /* 第1网格线gird-line,到第3网格线 */
+}
+.grid-container main {
+    grid-column: start / center;
+    /* grid-row: 3 / 5; */
+    grid-row: row 1 / 5; /* 第一个叫row的水平网格线的，或者水平网格线3 */
+}
+.grid-container .aside-title1 {
+    grid-column: span 1; /* 关键字span, 指定跨越1网格轨道grid track, 没有指定起始位置布局算法（placement algorithm）自动将其放到网格上可以容纳该元素的第一处可用空间 */
+    grid-row: span 1;
+}
+.grid-container .aside-title2 {
+    /* gird-column是缩写 */
+    /* grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row: span 1; */
+    /* 或者grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end | itemname; */
+    grid-area: 4 / 2 / span 1 / span 1;
+}
+
+/* 命名的网格区域 */
+.grid-named-area {
+    border: 1px solid red;
+    display: grid;
+    grid-template-areas: "top  top    right"
+                         "left .      right"
+                         "left bottom bottom1";
+    grid-template-rows: 1fr 1fr 4fr; /* 关键字auto: 由内容撑开 */
+    grid-template-columns: repeat(3, 1fr); /* []里面是分割网格轨道的 网格线名称 多网格线名称 */
+    grid-gap: 0.5em;
+}
+.grid-named-area > * {
+    background-color: aqua;
+}
+.grid-named-area header {
+    grid-area: top;
+}
+.grid-named-area nav {
+    grid-area: right;
+}
+.grid-named-area main {
+    grid-area: left;
+}
+.grid-named-area .aside-title1 {
+    grid-area: bottom;
+}
+.grid-named-area .aside-title2 {
+    grid-area: bottom1;
+}
