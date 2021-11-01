@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-10-19 14:40:37
  * @LastEditors: sunsh
- * @LastEditTime: 2021-11-01 18:37:49
+ * @LastEditTime: 2021-11-01 19:45:45
  */
 cont NOTE = `
 /* -----------------------------------------------------------第一部分 基础----------------------------------------------------------- */
@@ -517,21 +517,116 @@ relative和fixed的结合体
 
     
 /* ------------------------第8章 响应式布局------------------------ */
+响应式设计的三大原则:
+    ①移动优先，②@media, ③流式布局
+1.移动优先， 构建桌面版之前要先构建移动端布局
+虽然要先给移动端写布局，但是心里装着整体的设计，才能帮助我们在实现过程中做出合适的决定
+text-shadow
+不管用什么语言写代码都是一个迭代过程，CSS也不例外,反复尝试。
+关闭按钮text-indent 隐藏元素里面的内容，方便屏幕阅读器的使用者。
+\2261汉堡图标， classList.toggle();
+// 移动适配
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
+https://developers.google.com/web/tools/chrome-devtools/device-mode/（Chrome）
+或者
+https://developer.mozilla.org/en-US/docs/Tools/Responsive_Design_Mode（Firefox）
 
+mdn: https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag
 
+2. 媒体查询
+@media规则会进行条件检查，只有满足所有的条件时，才会将这些样式应用到页面上
+注意：
+    在媒体查询断点中推荐使用em单位。在各大主流浏览器中，当用户缩放页面或者改变默认的字号时，只有em单位表现一致。
+    以px或者rem单位为断点在Safari浏览器里不太可靠。同时当用户默认字号（通常是16px）改变的时候，em还能相应地缩放，因此它更适合当断点。
+    @media (-webkit-min-device-pixel-ratio: 2),
+            // (min-resolution: 2dppx), 有兼容性问题
+            (min-resolution: 192dpi) { ... } ——匹配屏幕分辨率大于等于2dppx（dppx指每个CSS像素里包含的物理像素点数）的设备，比如视网膜屏幕。
+提示：
+    媒体查询还可以放在标签中。在网页里加入<link rel="stylesheet" media="(min-width: 45em)" href="large-screen.css" />，只有当min-width媒体查
+    询条件满足的时候才会将large-screen.css文件的样式应用到页面。然而不管视口宽度如何，样式表都会被下载。这种方式只是为了更好地组织代码，并不会节省网络流量。
+@media print|screen,
+@media print {
+    * {
+      color: black !important;
+      background: none !important;
+    }
+    不需要的元素 {
+        display: none;
+    }
+  }
+// 断点
+.title {      ←---- 移动端样式，对所有的断点都生效
+    ...             
+}
 
+// 断点设置为35em，因为在这个宽度时，三列布局就开始显得拥挤了。
+@media (min-width: 35em) {     ←---- 中等屏幕的断点：覆盖对应的移动端样式
+    // 为中等屏幕引入列布局row, column-*
+    .title {                         
+        ...
+    }
+}
 
+@media (min-width: 50em) {      ←---- 大屏幕断点：覆盖对应的小屏幕和中等屏幕断点的样式
+    .title {                          
+        ...
+    }
+}
 
+响应模式，可以访问 https://bradfrost.github.io/this-is-responsive/patterns.html
 
+3.流式布局（fluid layout）。流式布局，有时被称作液体布局（liquid layout）
+在流式布局中，主页面容器通常不会有明确宽度，也不会给百分比宽度，但可能会设置左右内边距，或者设置左右外边距为auto，让其与视口边缘之间产生留白。
+也就是说容器可能比视口略窄，但永远不会比视口宽。
 
+主容器中所有列列用百分比或者flexbox。
+:root {
+    box-sizing: border-box;
+    font-size: calc(1vw + 0.6em);
+  }
+  
+  @media (min-width: 50em) {
+    :root {                           
+      font-size: 1.125em;    // 超过最大断点时，字号不再增长,设置字号的上限。
+    }
+  }
 
+// 在移动端少用table,table不折行容易元素被隐藏，用了table可以css中display: block;
 
+4.响应式图片
+图片通常是网页上最大的资源。首先要保证图片充分压缩。在图片编辑器中选择“Save for Web”选项能够极大地减小图片体积，或者用别的图片压缩工具压缩图片，比如https://tinypng.com/网站。
+.hero {                                 
+    background-image: url(coffee-beans-small.jpg);  ←---- 给移动设备提供最小的图
+  }
+  
+  @media (min-width: 35em) {
+    .hero {                                  
+      background-image: url(coffee-beans-medium.jpg);  ←---- 给中等屏幕提供稍大的图
+    }
+  }
+  
+  @media (min-width: 50em) {
+    .hero {                           
+      background-image: url(coffee-beans.jpg);  ←---- 给大屏幕提供完整分辨率的图
+    }
+  }
 
+媒体查询能够解决用CSS加载图片的问题，但是HTML里的<img>标签的解决方法：srcset属性（“source set”的缩写）。
+<img alt="A white coffee mug on a bed of coffee beans"            
+     src="coffee-beans-small.jpg"     ←---- 给不支持srcset的浏览器提供常规的src属性（比如IE和Opera Mini）
+     srcset="coffee-beans-small.jpg 560w,  （以下3行）每个图片的URL和它的宽度         
+             coffee-beans-medium.jpg 800w,          
+             coffee-beans.jpg 1280w"       
+/>
+响应式图片：https://jakearchibald.com/2015/anatomy-of-responsive-images/
+图片作为流式布局的一部分，请始终确保它不会超过容器的宽度img { max-width: 100%; }。
 
-
-
-
-
+总结：
+    优先实现移动端设计。
+    使用媒体查询，按照视口从小到大的顺序渐进增强网页。
+    使用流式布局适应任意浏览器尺寸。
+    使用响应式图片适应移动设备的带宽限制。
+    不要忘记给视口添加meta标签。
 
 
 
