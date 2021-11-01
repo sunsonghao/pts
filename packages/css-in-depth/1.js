@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-10-19 14:40:37
  * @LastEditors: sunsh
- * @LastEditTime: 2021-10-29 19:42:00
+ * @LastEditTime: 2021-11-01 17:24:48
  */
 cont NOTE = `
 /* -----------------------------------------------------------第一部分 基础----------------------------------------------------------- */
@@ -382,6 +382,7 @@ Flex兼容性问题见flexbugs: https://github.com/philipwalton/flexbugs
 
 /* ------------------------第6章 网格布局------------------------ */
 网格布局模块（Grid Layout Module）
+https://gridbyexample.com/ ,网格例子
 1.浏览器厂商采用了全新的方式处理网格布局。它们不再用浏览器前缀方式，用户必须明确地开启这项特性才能使用。
 display: grid;
 
@@ -429,9 +430,38 @@ grid-template-areas: "top  top    right"
 
 隐式网格轨道默认大小为auto，也就是它们会扩展到能容纳网格元素内容。可以给网格容器设置grid-auto-columns和grid-auto-rows，为隐式网格轨道指定一个大小（比如，grid-auto-columns: 1fr）。
 注意：在指定网格线的时候，隐式网格轨道不会改变负数的含义。负的网格线编号仍然是从显式网格的右下开始的。
+grid-auto-rows/columns/flow,
+
+// 子网格，subgrid, 在grid level2规范中。
+img标签的object-fit：fill, cover, contain属性，参考https://css-tricks.com/on-object-fit-and-object-position/
+
+5.特性查询@support, @rules
+@supports [not] (display: grid) {
+    ...
+}
+@supports (mix-blend-mode: overlay) 来查询是否支持混合模式
+ie不支持@support
+@supports (display: grid) or|and (display: -ms-grid)
+
+6.对齐方式
+查看HTML中的图片
+水平对齐：justify-content, justify-items,justify-self
+垂直对齐：align-content, align-items,align-self
+justify: space-evenly——将空间分配到每个网格轨道之间，且在两端各加上 同等大小 的间距（Flexbox规范不支持）。|s B s(ss) B s(ss) B s |
+justify: space-around——将空间分配到每个网格轨道之间，且在两端各加上一半的间距。 |s B s(s) B s(s) B s |
+         space-between——|s B s B s B s |
+https://gridbyexample.com/ grid by example
+
+总结：网格特别适合做网页整体布局（但不局限于此）。
+     网格可以与Flexbox配合实现完整的布局系统。
+     可以根据自己的喜好和特定场景，随意使用不同的语法（编号的网格线、命名的网格线、命名的网格区域）。
+     可以用auto-fill / auto-fit以及隐式网格，对大量或者数量未知的网格元素进行布局。
+     可以用特性查询实现渐进增强。
 
 
 
+
+/* ------------------------第7章 定位和层叠上下文------------------------ */
 
 
 

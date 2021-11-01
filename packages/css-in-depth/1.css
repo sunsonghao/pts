@@ -306,3 +306,36 @@ body {
 .grid-named-area .aside-title2 {
     grid-area: bottom1;
 }
+
+/* 隐式网格 */
+.grid-implicit figure {
+    margin: 0;
+    position: relative;
+}
+.grid-implicit figure figcaption {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+.grid-implicit img {
+    /* width: 100%; */
+    height: 100%;
+    max-width: 100%;
+}
+.grid-implicit {
+    display: grid;
+    /* auto-fill 只要网格放的下，就尽可能多的产生列轨道，可以把200改为20，切换auto-fit和auto-fill查看区别 */
+    /* 如果网格元素不够填满所有网格轨道，auto-fill就会导致一些空的网格轨道。如果不希望出现空的网格轨道，可以使用auto-fit关键字代替auto-fill。它会让非空的网格轨道扩展，填满可用空间。*/
+    /* 查看auto-fill和auto-fit两者区别：https://gridbyexample.com/examples/example37/ 或者 https://css-tricks.com/auto-sizing-columns-css-grid-auto-fill-vs-auto-fit/ */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* 列自动填充，auto-fit自动适应, 列宽最小是200px */
+    /* 隐式行，根据内容自动添加 */
+    grid-auto-rows: 1fr;
+    grid-gap: 1em;
+    /* 此时顺序已不是1234567..., grid默认一行放不下，会放到下一行。grid-auto-flow属性控制该行为，默认row。可以改为column，优先列放置，一列放满才会放到下一行 */
+    grid-auto-flow: row dense; /*视口调整到860， 不开该属性th3前面会留空白, dense紧凑的网格布局算法，或者只写一个dense */
+}
+.grid-implicit .featured {
+    grid-row: span 2;
+    grid-column: span 2;
+}
