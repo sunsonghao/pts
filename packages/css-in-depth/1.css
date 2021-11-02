@@ -339,3 +339,29 @@ body {
     grid-row: span 2;
     grid-column: span 2;
 }
+
+
+/* 渐变 */
+.gradient {
+    width: 200px;
+    height: 12px;
+    border-radius: 6px;
+    background-image: linear-gradient(100grad/* 百分度gradiant, 360deg=400grad=1turn=2πrad */, white, red, blue /* 任意多的节点，隔开 */);
+    background-image: linear-gradient(0.25turn, white 0%, red 50%, blue 100%/* blue颜色节点的位置 */);
+    /* 条纹：如果在同一个位置设置两个颜色节点，那么渐变会直接从一个颜色变换到另一个，而不是平滑过渡 */
+    background-image: linear-gradient(0.25turn, red 20%, white 20%, white 40%, blue 40%);
+    /* 重复渐变： repeating-linear-gradient, 进度条效果 */
+    background-image: repeating-linear-gradient(-45deg, #57b, #57b 10px, #148 10px, #148 20px);
+    /* https://css-tricks.com/stripes-css/ */
+}
+.radial-gradient {
+    width: 300px;
+    height: 200px;
+    /* 默认呈现椭圆，可以设置成圆渐变 */
+    background-image: radial-gradient(white, midnightblue);
+    background-image: radial-gradient(circle, white, midnightblue); /* 圆形 */
+    background-image: radial-gradient(100px at 25% 25%, white, midnightblue); /* 大小100px, 中心距离左上的距离 */
+    background-image: radial-gradient(circle, midnightblue 0, white 75%, red 100%); /* 大小100px, 中心距离左上的距离 */
+    background-image: repeating-radial-gradient(circle, midnightblue 0, midnightblue 10px, white 10px, white 20px);
+    /* 颜色接近的渐变，不要反差大的渐变 */
+}
