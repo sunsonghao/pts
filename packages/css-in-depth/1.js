@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-10-19 14:40:37
  * @LastEditors: sunsh
- * @LastEditTime: 2021-11-02 13:13:01
+ * @LastEditTime: 2021-11-02 14:59:19
  */
 cont NOTE = `
 /* -----------------------------------------------------------第一部分 基础----------------------------------------------------------- */
@@ -732,7 +732,49 @@ JavaScript替代方案
     在样式表中，把所有用于同一个模块的样式放在一起。
     使用一种命名约定，比如双连字符和双下划线，以便一眼就可以看清楚模块的结构。
 
-    
+
+
+
+/* ------------------------第10章　模式库------------------------ */
+模式库（pattern library）或者叫style guides, boootstrap|elemetui|Foundation|Pure样式说明 --kss
+/* 详细内容参考原文 */
+
+kss是一个 “style guide generator”，
+KSS是Knyle Style Sheets的简写（“Knyle” 来源于作者的名字Kyle Neath）
+https://github.com/kneath/kss
+
+markdown Cheatsheet
+https://cn.bing.com/search?q=Markdown+Cheatsheet&cvid=0da1830efb44441db09e3b7ee62af1cb&aqs=edge..69i57.1030j0j4&pglt=163&FORM=ANAB01&PC=U531
+
+Placeholder网站提供通用占位图片
+https://placeholder.com/
+
+2.改变编写CSS的方式
+模块化CSS是编写大规模CSS的核心，模式库是保证这些模块条理清晰、使用方便的手段。
+
+// css优先的工作流程
+使用模式库是从传统的CSS开发方式转变而来的一种解决方案。不同于之前的先写HTML页面再写样式，我们实现了模块化的样式，然后使用这些模块拼装成Web页面。
+这种解决方案称为CSS优先（CSS First）开发方式，先写CSS，而不是HTML。
+可以（并且应该）按照模式库的方式开发CSS，然后在项目中使用这些CSS。
+
+不要盲目地使用框架，要学习思考框架背后的设计思路。
+
+以模块化的方式来组织CSS代码，再维护一套与之相应的模式库。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
