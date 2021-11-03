@@ -422,3 +422,18 @@ body {
     border: 0.1em solid #ccc;
     border-width: 0.1em 0;
 }
+
+/* 间距 */
+.line-height {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.line-height > li {
+    background-color: grey;
+    display: inline; /* 文本行的高度由line-height高度决定 */
+    padding: 6px 8px; /* 审查元素看到盒子高度为27约等14+6*2 */
+    font-size: 14px;
+    line-height: 1.2; /* 16.8px, 此时上下行重叠*/
+    line-height: 2; /* 28px > 盒子高度27，上下行不会重叠 */
+}
