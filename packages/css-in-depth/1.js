@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-10-19 14:40:37
  * @LastEditors: sunsh
- * @LastEditTime: 2021-11-03 16:37:48
+ * @LastEditTime: 2021-11-03 19:34:24
  */
 cont NOTE = `
 /* -----------------------------------------------------------第一部分 基础----------------------------------------------------------- */
@@ -885,18 +885,64 @@ eg:
 
 
 
-
-
-
-
 /* ------------------------第 13 章　排版------------------------ */
+1.web字体
+@font-face, 告诉浏览器去哪里找到并下载自定义字体，供页面使用。
+Typekit,
+Webtype,
+google fonts：使用
+https://developers.google.cn/fonts/docs/getting_started?hl=zh-cn
 
+2.google fonts
+字形typeface是一组字体（胖瘦斜体）。
+Web字体是拖慢网页加载时间最大的几个元凶之一，仅排在图片之后。// 字体其实就是图片
 
+3.如何使用@font-face
+查看
+https://fonts.googleapis.com/css?family=Roboto:300|Sansita:800
+见css @font-face,
 
+4.　调整字距，提升可读性
+line-height和letter-spacing，这两个属性控制文本行之间的距离（垂直方向）和字符之间的距离（水平方向）。
 
+line-height属性的初始值是关键字normal，大约等于1.2（确切的数值是在字体文件中编码的，取决于字体的em大小），但是在大部分情况下，这个值太小了。
+对于正文主体来说，介于1.4和1.6之间的值比较理想。
 
+letter-spacing需要一个长度值，用来设置每个字符之间的距离。即使只设置1px，也是很夸张的字间距了，因此这应该是个很小的长度值，一般每次只增加1em的1/100（0.01em）。
 
+行高(文字的高度加上它与下一行文字之间的距离)常用‘点 pt’表示，1英寸96px, 约等72pt, pt * 96/72(1.333) = px;
+letter-spacing也可以设置负值，让字符更加紧凑。
 
+text-transform：uppercase|capitalize|lowercase属性可以把所有字母改成大写，不管HTML原始文本如何书写.
+
+// 垂直规律：设计基线网格 baseline grid, 基线网格是指文本行之间重复等距离的标线.
+Why is Vertical Rhythm an Important Typography Practice?
+
+5.恼人的FOUT和FOIT
+fout: 无样式文本闪动（Flash of Unstyled Text）, 网络字体未下载完前使用系统字体，下载完使用web font导致布局变化。
+foit: 不可见文本闪动（Flash of Invisible Text）, 先不渲染字体，等下载完再渲染，导致开始时需要字体的地方显示空白。
+
+以上解决方案：
+// 使用Font Face Observer，库
+js监控字体加载完成，为html添加class: .font-loaded字体加载成功, .font-failed失败
+// 回退到系统字体
+① css中使用回退字体，.fonts-loaded中把回退字体改成想要的Web字体，把foit改为fout。（更倾向这种，主要看偏好）
+② CSS中使用Web字体，.fonts-failed中把字体改成回退字体。依然会foit,但不会在字体加载失败时出现空白。
+Font style matcher网站
+// font-display属性
+在font-face中使用，font-display: swap; // 立即显示回退字体等web字体可用是立即交换。
+fongt-display: auto（foit）|swap|fallback(等100ms隐藏状态，web字体准备好就加载没准备好就回退)|optional(类似于fallback，但是允许浏览器基于网速判断是否显示Web字体);
+
+web字体表现：
+Jeremy L. Wagner写的Web Performance in Action
+
+总结：
+使用字体供应商（比如谷歌字体）的服务可以轻松集成Web字体。
+严格限制添加到网页的Web字体数量，来控制页面体积。
+使用@font-face规则集管理自己的字体。
+花点时间调整line-height和letter-spacing，使页面段落分明、清晰易读。
+使用Font Face Observer或其他JavaScript来协助控制加载行为，防止文本隐藏的问题。
+留意以后font-display的支持情况。
 
 
 

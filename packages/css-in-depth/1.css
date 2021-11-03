@@ -437,3 +437,15 @@ body {
     line-height: 1.2; /* 16.8px, 此时上下行重叠*/
     line-height: 2; /* 28px > 盒子高度27，上下行不会重叠 */
 }
+
+@font-face {     /*  @font-face规则定义一个字体，可以在页面里其他CSS中使用 */
+    font-family: 'Roboto';      /* 声明字体名称 */
+    font-style: normal;
+    font-weight: 300;
+  
+    src: local('Roboto Light'), local('Roboto-Light'),
+        /* Web Open Font Format, woff */
+       url(https://fonts.gstatic.com/s/roboto/v15/Hgo13k-tfSpn0qi1SFdUfZBw1xU1rKptJj_0jans920.woff2) format('woff2');    /* 可以找到字体文件的位置,系统中找不到local里面的字体就去url找woff2字体 */
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC,
+       U+2000-206F, U+2074, U+20AC, U+2212, U+2215;    /* @font-face规则使用的Unicode编码范围 */
+  } 
