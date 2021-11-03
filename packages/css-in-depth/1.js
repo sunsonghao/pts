@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-10-19 14:40:37
  * @LastEditors: sunsh
- * @LastEditTime: 2021-11-02 19:05:47
+ * @LastEditTime: 2021-11-03 12:32:21
  */
 cont NOTE = `
 /* -----------------------------------------------------------第一部分 基础----------------------------------------------------------- */
@@ -775,7 +775,7 @@ https://placeholder.com/
 
 在实现了页面里某个组件的布局并写完样式之后，不要急着继续，有意识地训练自己，以挑剔的眼光审视刚刚完成的代码。
 
-1.渐变
+1.渐变,见css gradient
 background: image position size repeat origin(相对边框盒、内边距框盒（初始值）或内容盒子来定位) clip(是否应该填充边框盒（初始值）、内边距框盒或内容盒子) attachment color(渲染到背景图下方);
 属性的顺序都是按照正常人的思维逻辑需要的属性。
 
@@ -784,27 +784,47 @@ background-image: linear-gradient(to right, white, blue); // 角度（deg,按照
 // 查看css文件中的gradient class
 https://css-tricks.com/stripes-css/
 
-2.阴影
+2.阴影, 见css shadow
 box-shadow,
 text-shadow,
 
+如：apple
+在看到某个网站上的新设计时，停下来花些时间，用浏览器的开发者工具检查一下，看看这是如何实现的。不要觉得麻烦哦，见多才能识广。
 
+3.混合模式, 见css blend
 
+大部分背景相关的属性可以接受多个值，以逗号分隔。
+background-blend-mode: multiply|color-burn|difference|luminosity(亮度，前背景图的明暗和背景颜色色相混合，取决于哪个图层在其他图层之上)
+// 混合模式的类型-15种
+每一种都使用不同的计算原理来控制生成最终的混合结果。对每一个像素来说，就是取一个图层上的像素颜色，与其他图层上对应像素的颜色拼合计算，生成一个新的像素颜色，最终生成一张混合图片。
 
+效果分类	混合模式	描述
+变暗	multiply	前景色越亮，背景色显示出来的越多
+        darken	    选择两个颜色中较暗的那个
+        color-burn	加深背景色，增加对比度
+变亮	screen	    前景色越暗，背景色显示出来的越多
+        lighten	    选择两个颜色中较亮的那个
+        color-dodge	加亮背景色，降低对比度
+对比	overlay	    对暗色使用multiply，对亮色使用screen，以增加对比度，对比效果较柔和
+        hard-light	大幅增加对比度，有点像叠加，但是使用加强版的multiply或者screen，对比效果明显
+        soft-light	有点类似于hard-light，但是使用burn/dodge来代替multiply/screen
+复合	Hue	        将上层颜色的色相混合到下层颜色上
+        saturation	将上层颜色的饱和度混合到下层颜色上
+        luminosity	将上层颜色的明度混合到下层颜色上
+        color	    将上层颜色的色相和饱和度混合到下层颜色上
+比较	difference	从亮色中减去暗色
+        exclusion	类似于difference，但对比度稍弱
 
+mix-blend-mode: 融合混合模式。不仅可以混合图片，还可以把元素的文本和边框与容器的背景图片混合在一起
+background-blend-mode,混合背景图和背景颜色。
+使用混合模式，结合渐变和阴影，可以为页面添加很多有意思的视觉效果
 
-
-
-
-
-
-
-
-
-
-
-
-
+总结：
+    使用渐变和阴影为页面增加立体效果。
+    基本的扁平化设计也可以少量应用阴影和渐变。
+    带有明确颜色节点的渐变，可以为元素添加条纹效果。
+    小巧的背景渐变比纯色背景更能提升设计效果。
+    使用混合模式可以为图片着色或者添加纹理效果。
 
 
 
