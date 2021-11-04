@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-10-19 14:40:37
  * @LastEditors: sunsh
- * @LastEditTime: 2021-11-04 15:39:58
+ * @LastEditTime: 2021-11-04 18:51:21
  */
 cont NOTE = `
 /* -----------------------------------------------------------第一部分 基础----------------------------------------------------------- */
@@ -1002,26 +1002,95 @@ if (dropdown.classList.contains('is-open')) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* ------------------------第 15 变换------------------------ */
+tranform属性：旋转、平移、缩放、斜切。
+使用变换操作元素，提升过渡和动画的性能
+为过渡添加“弹跳”效果
+浏览器的渲染路径
+了解3D变换和透视距离
+
+1.　旋转、平移、缩放和倾斜
+transform: 不会脱离文档流，初始位置也不会被占用。变换元素不会导致其他元素移动，因此可能出现重叠，eg:放大时使用scale不影响周围元素的位置。
+transform不能作用到行内元素上，span、a。
+
+// 变换基点point of origin
+变换是围绕基点（point of origin）发生的,基点是旋转的轴心。默认情况下，基点就是元素的中心，但可以通过transform-origin属性改变基点位置
+transform: left|top|right|bottom|center|%|em|px|etc;
+
+多重变换：
+transform: rotate() translate(); /* 从右到左执行，先translate后rotate */ 
+注意修改translate()的值的时候，元素好像是沿着一个倾斜的坐标轴在移动，而不是正常的方向。这是因为旋转发生在平移之后。
+
+2. 在运动中变换(纯粹的变换没有太大的意义，要结合动画)
+图标：sprite sheet, icon font, svg(scalable vector graphic)SVG是基于XML的文件格式，可以直接在HTML中使用它。
+
+Using SVG
+https://css-tricks.com/using-svg/#:~:text=SVG%20is%20an%20image%20format%20for%20vector%20graphics.,Here%E2%80%99s%20a%20Kiwi%20bird%20standing%20on%20an%20oval.
+
+弹跳效果
+opacity: 0;         开始时隐藏标签
+transform: translate(-1em);      使标签向左移动1em
+transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.3),  第二个控制点超出了坐标轴1.3 > 1
+            opacity 0.4s linear; 
+
+交错动画：通过transition-delay实现
+.nav-links > li:nth-child(2) .nav-links__label {      选中第二个菜 单项的标签
+    transition-delay: 0.1s;       为过渡设置0.1s的延迟
+}                                                                
+.nav-links > li:nth-child(3) .nav-links__label {         选中第三个菜单项的标签
+    transition-delay: 0.2s;        为过渡设置0.2s的延迟
+}
+···
+
+3. 动画性能
+https://csstriggers.com/ ，查看什么属性会触发layout,paint,composite
+render包括：
+layout: 计算每个元素的位置，一个元素位置大小改变，就需要重拍reflow。
+paint: 填充像素的过程，不会真正在屏幕上绘制，而是在内存中。页面各部分生成了很多图层（layers）,可以在浏览器的3D view面板中查看。
+        使用transform等属性（可以查看mdn）的元素会被提取到单独的图层，它被发送给GPU绘制（硬件加速，需要更多内存但是渲染速度会加快），主图层用CPU绘制。
+composite: 合成，按顺序收集所有图层，确保图层出现的顺序正确。
+
+will-change: transform; 提前告诉浏览器元素的transform属性要改变了，意味着元素将被提升到自己的绘制图层。除非遇到性能问题，否则不要盲目添加该属性到页面，因为它会占用很多的系统资源。
+// Everything You Need to Know About the CSS will-change Property, 现在2D变换也可以使用硬件加速。
+https://dev.opera.com/articles/css-will-change-property/#:~:text=The%20will-changeproperty%20allows%20you%20to%20inform%20the%20browser,negative%20effect%20on%20the%20responsiveness%20of%20a%20page.
+
+4. 三维3D变换
+为页面添加3D变换之前，我们需要先确定透视距离（perspective）。
+如果镜头比较近（即透视距离小），那么3D效果就会比较强。如果镜头比较远（即透视距离大），那么3D效果就会比较弱。
+perspective:400px; 或者 transform: perspective(400px) rotateY(30deg)
+perspective(100px) rotateY(30deg)
+
+为共有祖先元素设置perspective属性可以使多个元素共享相同的透视距离。
+
+// 高级3D变换属性
+perspective-origin: left bottom移动镜头位置到左下方。
+默认情况下，透视距离的渲染是假设观察者（或者镜头）位于元素中心的正前方。perspective-origin属性可以上下、左右移动镜头的位置
+
+backface-visibility: hidden; /* 背面不可见 */, 默认rotateY(180deg)可以看到背面，hidden后不可见。2个元素背靠背，给父元素添加该属性。
+应用：卡片翻转
+参见：Intro to CSS 3D Transforms
+
+transform-style（preserve-3d）属性，ie不支持
+https://davidwalsh.name/author/anatudor
+*查看Ana Tudor在DWB网站写的教程，https://davidwalsh.name/3d-transforms
+对容器元素进行3D旋转时，只是旋转3D场景的2D照片，因为最终渲染的就是2D的照片。此时景深都不对了，可以使用该属性。
+
+5.倒影box-reflect
+
+总结
+    在二维和三维空间中使用变换来缩放、旋转、平移和倾斜元素。
+    如果想要优化过渡和动画性能，变换就必不可少。
+    理解渲染路径是如何工作的，创建动画的时候一定要牢记。
+    使用自定义定时函数曲线为过渡添加弹跳特效。
+
+
+
+
+
+
+
+
+
 
 
 
