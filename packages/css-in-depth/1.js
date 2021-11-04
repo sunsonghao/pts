@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-10-19 14:40:37
  * @LastEditors: sunsh
- * @LastEditTime: 2021-11-04 18:51:21
+ * @LastEditTime: 2021-11-04 20:09:32
  */
 cont NOTE = `
 /* -----------------------------------------------------------第一部分 基础----------------------------------------------------------- */
@@ -1086,34 +1086,116 @@ https://davidwalsh.name/author/anatudor
 
 
 
-
-
-
-
-
-
-
-
-
 /* ------------------------第 16 章　动画------------------------ */
+使用关键帧动画为页面添加复杂运动
+页面加载的时候使用动画
+使用旋转器动画提供反馈
+吸引用户对保存按钮的注意力，提醒用户去保存
 
+过渡：从一个地方到另外一个地方。相比之下，我们可能希望某个元素的变化过程是迂回的路径。
+为了对页面变化有更加精确的控制，CSS提供了关键帧动画。
+keyframe:
+keyframe1-----浏览器插入的帧图像-----keyframe2-----浏览器插入的帧图像-----keyframe3
+transition: 也是一种keyframe, 只定义了开头和结尾的2帧。
 
+1. 关键帧
+@keyframes animation-name {
+    0% {
+        property: value;
+    }
+    ···
+}
+.selector {
+    // 如果出现样式层叠，那么动画中设置的规则比其他声明拥有更高的优先级。
+    animation: animation-name duration fn delay;
+}
 
+2. 为3D变换添加动画
+.flyin-grid {
+    margin: 0 1rem;              
+    perspective: 500px;     ←------ 在容器上设置共享的透视距离
+}
 
+.flyin-grid__item {
+    animation: fly-in 600ms ease-in;    ←---- 为每个元素添加动画
+}
 
+@keyframes fly-in {
+    0% {
+        transform: translateZ(-800px) rotateY(90deg);    ←---- 以旋转后的状态，从远处开始
+        opacity: 0;
+    }
+    56% {
+        transform: translateZ(-160px) rotateY(87deg);    ←---- 已经很近了，但几乎还是旋转状态
+        opacity: 1;
+    }
+    100% {
+        anslateZ(0) rotateY(0);   ←---- 在正常位置结束
+    }
+}
 
+3.　动画延迟和填充模式
+animation-delay属性，为元素添加不同的延迟。
+// 见animation-fill-mode.png图片
+使用animation-fill-mode可以在动画播放前或播放后应用动画样式。none|backwards|forwards|both;
+none可以在未播放动画时隐藏元素不显示，否则在播放动画前元素先在固定位置，播放时再消失，最后再在结果位置。
+.flyin-grid__item {
+    animation: fly-in 600ms ease-in;
+    animation-fill-mode: backwards;    ←---- 动画开始之前应用第一帧上的动画样式
+    animation-fill-mode: forwards;    ←---- 动画结束后应用最后一帧上的动画样式
+}
 
+4. 通过动画传递意图
+4.1 按钮loading反馈用户操作
 
+// 可以画出月牙
+border-top: 2px solid white;
+border-radius: 50%;
+animation-delay: infinite; // 循环动画
 
+4.2 吸引用户注意力
+.shake {
+    animation: shake 0.7s linear;
+  }
+  @keyframes shake {
+    0%,        动画执行期间，在多个位置使用相同的关键帧定义
+    100% {                      
+      transform: translateX(0);
+    }
+    10%,
+    30%,
+    50%,
+    70% {                                    
+      transform: translateX(-0.4em);      ←---- 向左移动元素
+    }
+    20%,
+    40%,
+    60% {                                     
+      transform: translateX(0.4em);        ←---- 向右移动元素
+    }         
+    80% {      最后一次摇晃的时候降低移动幅度
+      transform: translateX(0.3em);        
+    }                                      
+    90% {                                  
+      transform: translateX(-0.3em);       
+    }                                      
+  }
 
+addEventListener('animationend'), 监听动画结束事件
 
+查看MDN文档Animation，有一套处理CSS 动画的API.
 
+推荐一个优秀的网站：animista。它提供了非常大的动画库可供选择，包含像果冻一样的弹跳、滚动和摇晃等效果。
+https://animista.net/
+greensock网站等。
+https://greensock.com/
 
+最后再给你一条建议，就是保持好奇心。我已经向你介绍了CSS工具集里的一大批工具，但这些工具可以组合和匹配的方式是无穷无尽的。当你看到令人赞叹的Web页面的时候，
+打开浏览器的开发者工具，试着去弄清楚它是如何实现的。多多在线关注那些制作创意演示或者提供趣味教程的开发者和设计师，多多尝试新事物，持续学习。
 
-
-
-
-
-
-
+总结：
+    使用关键帧动画定义动画中的关键点。
+    使用前向和后向填充模式使动画的开始或结束无缝衔接。
+    在恰当的时间使用JavaScript触发动画。
+    为Web页面添加动画，无须华丽炫酷，只需针对用户交互传达正确的含义。
 `;
