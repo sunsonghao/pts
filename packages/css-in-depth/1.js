@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-10-19 14:40:37
  * @LastEditors: sunsh
- * @LastEditTime: 2021-11-03 19:34:24
+ * @LastEditTime: 2021-11-04 15:39:58
  */
 cont NOTE = `
 /* -----------------------------------------------------------第一部分 基础----------------------------------------------------------- */
@@ -931,7 +931,7 @@ js监控字体加载完成，为html添加class: .font-loaded字体加载成功,
 Font style matcher网站
 // font-display属性
 在font-face中使用，font-display: swap; // 立即显示回退字体等web字体可用是立即交换。
-fongt-display: auto（foit）|swap|fallback(等100ms隐藏状态，web字体准备好就加载没准备好就回退)|optional(类似于fallback，但是允许浏览器基于网速判断是否显示Web字体);
+font-display: auto（foit）|swap|fallback(等100ms隐藏状态，web字体准备好就加载没准备好就回退)|optional(类似于fallback，但是允许浏览器基于网速判断是否显示Web字体);
 
 web字体表现：
 Jeremy L. Wagner写的Web Performance in Action
@@ -947,13 +947,76 @@ Jeremy L. Wagner写的Web Performance in Action
 
 
 
-
-
-
-
-
-
 /* ------------------------第 14 过渡------------------------ */
+使用过渡为网页引入动效
+理解定时函数并选择合适的效果，eg:贝塞尔曲线
+配合JavaScript使用
+
+1. 定时函数
+transition-duration: 0s, 不能写成0.
+// 贝塞尔曲线Beézier curve：连续性的变化
+transition-timing-function: linear, ease,ease-in,ease-out, ease-in-out。
+可以在styles中查看点击该属性值前的小方块，来调整曲线：末端的小横线叫控制炳，小横线上的点叫控制点。注意控制柄的长度和方向是如何“牵引”曲线的。
+cubic-bezier(0.45,0.45, 0.55,0.95,),自定义曲线函数，参数为2个控制点在笛卡尔坐标系中的坐标。（0-1）
+建议：
+    linear: 颜色变化或者淡入淡出
+    ease-out: 减速，用户发起的变化。用户点击按钮或者划过元素的时候，使用ease-out或者类似曲线。这样用户就可以看到快速发生的反馈，及时响应输入，然后元素慢慢过渡到最终状态。
+    esae-in: 加速，系统发起的变化。当内容加载完成或者超时事件触发的时候，使用ease-in或者类似曲线。这样元素就可以慢慢引起用户注意，然后速度越来越快直到完成最终变化
+
+2. 阶跃
+steps函数：非连续性的瞬时阶跃（像楼梯一样的线）
+steps(次数， 每次 变化发生在阶跃的开始还是结束的关键字：start|end(默认));
+见css 贝塞尔曲线
+
+Clever Uses for Step Easing
+https://css-tricks.com/clever-uses-step-easing/#:~:text=Use%20Cases%201%20Sprite%20Animation.%20Let%E2%80%99s%20get%20the,7%20Strobe%20Light.%20...%208%20Paw%20Prints.%20
+
+3.非动画属性
+大部分的接受长度值、数值、颜色值或者calc()函数值的属性可以添加动画效果；
+大部分的使用关键字或者其他非连续性值的属性（比如url()）不可以使用动画。eg：display,（包括width:auto）
+https://developer.mozilla.org/zh-CN/docs/Web/CSS/background-color ,查看属性能力总结table中的animation type看是否支持动画或者继承等。
+
+// 淡入淡出
+display不支持过渡。可以opacity和visibility相结合的方式，必要时可以引入js。
+visibility支持动画属性，不会移除元素会显示空白，别的元素围绕它布局。
+见css, 淡入淡出
+
+//高度动画
+if (dropdown.classList.contains('is-open')) {                  
+    drawer.style.setProperty('height', height + 'px');      打开的时候精确设置高度值
+} else {
+    drawer.style.setProperty('height', '0');    关闭的时候把高度重置为0
+}
+如果一个元素使用display: none隐藏起来，那它的scrollHeight属性等于0。遇到这种情况的时候，可以先把display属性设置为block（el.style.display = 'block'），获取到scrollHeight，
+然后重置display的值（el.style.display = 'none'）。
+
+// 动画事件
+可以使用JavaScript的transitionend事件在过渡完成之后做一些额外处理。
+
+总结：
+    使用过渡可以使页面中的突变变得平滑。
+    使用加速运动可以吸引用户注意力。
+    通知用户他们的行为已生效，应该使用减速运动。
+    只使用CSS无法满足需求时，可以使用JavaScript更改类配合过渡来实现。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

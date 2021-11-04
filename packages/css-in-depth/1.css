@@ -449,3 +449,38 @@ body {
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC,
        U+2000-206F, U+2074, U+20AC, U+2212, U+2215;    /* @font-face规则使用的Unicode编码范围 */
   } 
+
+/* 贝塞尔曲线 */
+.cubic-bezier-curve {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1); /* x：时间，y:值 */
+    transition: all 0.4s steps(3, end); /* 有种卡顿的感觉，一步一步的 */
+    transition: all 0.4s steps(3); /* 有种卡顿的感觉，一步一步的 */
+}
+.cubic-bezier-curve:hover {
+    background-color: hsl(300, 97%, 50%);
+    width: 200px;
+    height: 200px;
+}
+
+/* 淡入淡出 */
+.fade-in {
+    position: relative;
+    height: 400px;
+}
+.fade-in__sub {
+    position: absolute;
+    background-color: white;
+    min-width: 8em;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s linear,
+                visibility 0s linear 0.2s;
+}
+.fade-in:hover .fade-in__sub.is-open {
+    opacity: 1;
+    visibility: visible; /* 由于使用absolute,不太用担心布局 */
+    transition-delay: 0s; /* 移除延时 */
+}
