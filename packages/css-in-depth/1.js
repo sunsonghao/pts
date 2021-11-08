@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-10-19 14:40:37
  * @LastEditors: sunsh
- * @LastEditTime: 2021-11-05 12:00:04
+ * @LastEditTime: 2021-11-08 15:26:23
  */
 cont NOTE = `
 /* -----------------------------------------------------------第一部分 基础----------------------------------------------------------- */
@@ -712,6 +712,8 @@ main.scss:
 
 5.css方法论
 https://docs.emmet.io/filters/bem/
+https://www.smashingmagazine.com/2012/04/a-new-front-end-methodology-bem/
+https://www.smashingmagazine.com/2011/12/an-introduction-to-object-oriented-css-oocss/
     OOCSS——面向对象的CSS，由Nicole Sullivan创建。
     SMACSS——可扩展的、模块化CSS架构，由Jonathan Snook创建。
     BEM——块（Block）、元素（Element）和修饰符（Modifier），由Yandex公司提出。
@@ -917,6 +919,7 @@ text-transform：uppercase|capitalize|lowercase属性可以把所有字母改成
 
 // 垂直规律：设计基线网格 baseline grid, 基线网格是指文本行之间重复等距离的标线.
 Why is Vertical Rhythm an Important Typography Practice?
+https://www.smashingmagazine.com/2012/12/css-baseline-the-good-the-bad-and-the-ugly/
 
 5.恼人的FOUT和FOIT
 fout: 无样式文本闪动（Flash of Unstyled Text）, 网络字体未下载完前使用系统字体，下载完使用web font导致布局变化。
