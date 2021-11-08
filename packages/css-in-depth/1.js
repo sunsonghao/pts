@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-10-19 14:40:37
  * @LastEditors: sunsh
- * @LastEditTime: 2021-11-08 15:26:23
+ * @LastEditTime: 2021-11-08 16:20:37
  */
 cont NOTE = `
 /* -----------------------------------------------------------第一部分 基础----------------------------------------------------------- */
@@ -1249,13 +1249,23 @@ li.target,复合选择器compound,
 
 
 
-/* ------------------------预处理器------------------------ */
+/* ------------------------sass预处理器------------------------ */
+变量： $xxxx, // color: $a - $b;
+@extend,扩展：.a {color: red;}  .b {@extend .a; font-size: 12px;} -> 生成.a,.b {color: red;} .b {font-size:12px;}
+@mixin,@include：mixin类似函数，@include会拷贝生成一份新的mixin代码
+@import, 局部文件: a.scss b.scss -> main.scss: @import a.scss;@import b.scss;
+颜色处理函数：darken,lighten, saturate增加饱和度, desaturate降低饱和度, adjust-hue调整色相;
+A Visual Guide to Sass & Compass Color Functions
+循环：
+    @for $index from 2 to 5 {   ←---- 从2到4迭代$index值
+        .nav-links > li:nth-child(#{$index}) {       ←---- 在选择器中使用变量
+        transition-delay: (0.1s * $index) – 0.1s;   ←---- 变量乘以一个时间值
+        }
+    }
 
-
-
-
-
-
-
-
+postcss:
+    autoprefixer, 
+    cssnext,
+    cssnano,
+    precss
 `;
