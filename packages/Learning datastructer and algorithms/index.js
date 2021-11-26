@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-11-23 11:10:08
  * @LastEditors: sunsh
- * @LastEditTime: 2021-11-24 19:10:58
+ * @LastEditTime: 2021-11-26 19:23:49
  */
 /* 类型转换 */
 
@@ -62,7 +62,7 @@ class Stack1 {
         }
         
         const pop = this.items[this.count];
-        delete this.items[this.count--];
+        delete this.items[this.count--]; // 由于栈从栈顶弹出因此count也可以用来表示栈的深度
         return pop;
     }
     peek() {
@@ -161,3 +161,179 @@ function decimal(dec, base) {
     return bin;
 }
 console.log(decimal(15, 16)); // F
+
+
+/* 队列queue,双端队里double-ended queue(dequeue) */
+// 如：打印队列
+// {'0': 'first', '1': 'second'···}
+class Queue {
+    constructor() {
+        this.count = 0; // 加入队列元素的key,因为从头部pop, count不能表示队列的长度
+        this.lowest = 0; // 队列头部元素的key
+        this.items = {};
+    }
+    enqueue(ele) {
+        this.items[this.count++] = ele;
+    }
+    // 先进先出，和stack 先进后出不同
+    dequeue() {
+        if (this.isEmpty()) {
+            return void(0);
+        }
+        const item = this.items[this.lowest];
+        delete this.items[this.lowest++];
+        return item;
+    }
+    peek() {
+        if (this.isEmpty()) {
+            return void(0);
+        }
+        return this.items[this.lowest];
+    }
+    size() {
+        return this.count - this.lowest;
+    }
+    isEmpty() {
+        return this.lowest === this.count;
+    }
+    clear() {
+        this.lowest = this.count = 0;
+        this.items = {};
+    }
+    toString() {
+        if (this.isEmpty()) {
+            return '';
+        }
+        let string = '';
+        for (let index = this.lowest; index < this.count; index++) {
+            string += `,${this.items[index]}`;
+        }
+        return string.slice(1);
+    }
+}
+
+let q = new Queue();
+q.enqueue('first');
+q.enqueue('second');
+console.log(q);
+q.dequeue();
+console.log(q);
+q.enqueue('third');
+console.log(q, q.size(),q.toString())
+
+// dequeue，队列和和栈的组合：允许同时从前端和后端进行添加和删除，兼具fifo和lifo。使用数组模拟更简单，但复杂度更高
+class Dequeue  extends Queue {
+    constructor() {
+        super();
+        console.log('i\'am dequeue!');
+    }
+
+    addFront(ele) {
+        if (this.isEmpty()) {
+            this.addBack(ele);
+        } else {
+            // 切换key计数器
+            this.count = --this.lowest;
+            this.items[this.count] = ele;
+        }
+    }
+    removeFront() {
+        return this.dequeue();
+    }
+    addBack(ele) {
+        // 切换key计数器
+        this.count = this.lowest + this.size();
+        return this.enqueue(ele)
+    }
+    removeBack() {
+        if (this.isEmpty()) {
+            return void(0);
+        }
+        const back = this.items[this.lowest + this.size() - 1];
+        delete this.items[this.lowest + this.size() - 1];
+        return back;
+    }
+    peekFront() {
+        return this.peek();
+    }
+    peekBack() {
+        if (this.isEmpty()) {
+            return void(0);
+        }
+       return this.items[this.lowest + this.size() - 1];
+    }
+    size() {
+        return Object.keys(this.items).length
+    }
+    isEmpty() {
+        return !this.size();
+    }
+    toString() {
+        if (this.isEmpty()) {
+            return '';
+        }
+        let string = '';
+        for (let index = this.lowest; index < this.lowest + this.size(); index++) {
+            string += `,${this.items[index]}`;
+        }
+        return string.slice(1);
+    }
+}
+
+let deq = new Dequeue();
+deq.addFront(1)
+console.log(deq);
+deq.addFront(2)
+console.log(deq);
+deq.addBack(4);
+console.log(deq);
+deq.removeFront();
+console.log(deq, deq.toString());
+
+// 实现回文检查器
+// 最简单方法：上海自来水来自海上。比较string == [...string].reverse().join('')， 
+// 数据结构双端队列实现：
+function palindrome(str) {
+    if (str == null || str == void(0) || (str !== null && str.length === 0)) {
+        return false;
+    }
+    str = str.toLocaleLowerCase().split(' ').join('');
+    let deq = new Dequeue();
+    
+    for (let index = 0; index < str.length; index++) {
+       deq.addBack(str.charAt(index));
+    }
+
+    let res = true;
+    while (deq.size() > 1) {
+        if (deq.removeBack() !== deq.removeFront()) {
+            res = false;
+            break;
+        }
+    }
+    return res;
+};
+console.log(palindrome('abcba'));
+
+// 循环队列（击鼓传花）
+function hotPotato(numbers, times) {
+    let q = new Queue();
+    let eliminated = [];
+
+    for (let index = 0; index < numbers.length; index++) {
+        q.enqueue(numbers[index]);
+    }
+    while(q.size() > 1) {
+        // 固定时间停止
+        for (let index = 0; index < times; index++) {
+            q.enqueue(q.dequeue());
+        }
+        eliminated.push(q.dequeue());
+    }
+
+    return {
+        winner: q.dequeue(),
+        eliminated,
+    }
+}
+console.log(hotPotato([1, 2, 3, 4, 5], 6));
