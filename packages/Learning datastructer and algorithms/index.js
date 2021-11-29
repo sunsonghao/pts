@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-11-23 11:10:08
  * @LastEditors: sunsh
- * @LastEditTime: 2021-11-26 19:23:49
+ * @LastEditTime: 2021-11-29 19:41:28
  */
 /* 类型转换 */
 
@@ -161,6 +161,7 @@ function decimal(dec, base) {
     return bin;
 }
 console.log(decimal(15, 16)); // F
+
 
 
 /* 队列queue,双端队里double-ended queue(dequeue) */
@@ -337,3 +338,129 @@ function hotPotato(numbers, times) {
     }
 }
 console.log(hotPotato([1, 2, 3, 4, 5], 6));
+
+
+
+/* 链表 */
+// 链表：动态数据结构意味着可以任意添加删除项，他会按需扩容。JS数组的插入需要移动元素（背后原理）
+// （双向链表、循环链表、排序链表）
+class Node {
+    constructor(ele) {
+        this.ele = ele;
+        this.next = void(0);
+    }
+}
+// 链表在内存中不是连续的，每次都需要从头开始找
+class LinkedList {
+    constructor(equalsFn = (a, b) => a === b) {
+        this.count = 0; // 元素个数
+        this.head = void(0); // 该结构是动态地，可以在任意位置插入元素，需要把head保存下来
+        this.equalsFn = equalsFn;
+    }
+    push(ele) {
+        const node = new Node(ele);
+        if (this.head == null) {
+            this.head = node;
+        } else { 
+            // 需要找到结尾位置
+            let cur = this.head;
+            while (cur.next != null) {
+                cur = cur.next;
+            }
+            // 在最后插入元素
+            cur.next = node;
+        }
+        this.count++;
+    }
+    getEleAt(ind) {
+        if (ind >= 0 && ind < this.count) {
+            let cur = this.head;
+            for (let index = 0; index < ind && cur != null; index++) {
+                cur = cur.next;
+            }
+            return cur;
+        }
+        return void(0);
+    }
+    insert(ele, position) {
+        if (this.indexIsLegal(position)) {
+            const node = new Node(ele);
+            if (position === 0) {
+                const cur = this.head;
+                node.next = cur;
+                this.head = node;
+            } else {
+                let prev = this.getEleAt(position - 1);
+                let curr = prev.next;
+                node.next = curr;
+                prev.next = node;
+            }
+            this.count++;
+            return true;
+        }
+        return false;
+    }
+    remove(ele) {
+        const index = this.indexOf(ele); 
+        return this.removeAt(index);
+    }
+    removeAt(index) {
+        if (this.indexIsLegal(index)) {
+            if (index === 0) {
+                this.head = this.head.next;
+            } else {
+                let prev = this.getEleAt(index - 1);
+                let cur = this.getEleAt(index);
+                prev.next = cur.next;
+            }
+            this.count--;
+            return true;
+        }
+        return false;
+    }
+    indexOf(ele) {
+        let cur = this.head;
+        for (let index = 0; index < this.count && cur != null; index++) {
+            if (this.equalsFn(cur, ele)) {
+                return index;
+            }
+            cur = cur.next;
+        }
+        return -1;
+    }
+    isEmpty() {
+        return this.count === 0;
+    }
+    size() {
+        return this.count;
+    }
+    getHead() { 
+        return this.head;
+    } 
+    toString() {
+        if (this.head == null) {
+            return '';
+        }
+        let string = this.head.ele;
+        let cur = this.head.next;
+        for (let index = 0; index < this.size() && cur != null; index++) {
+            string += ',' + cur.ele;
+            cur = cur.next;
+        }
+        return cur;
+    }
+    indexIsLegal(index) {
+        return (index >=0 && index < this.count)
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
