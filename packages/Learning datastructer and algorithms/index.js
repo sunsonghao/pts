@@ -3,7 +3,7 @@
  * @Author: sunsh
  * @Date: 2021-11-23 11:10:08
  * @LastEditors: sunsh
- * @LastEditTime: 2021-11-29 19:41:28
+ * @LastEditTime: 2021-11-30 01:01:55
  */
 /* 类型转换 */
 
@@ -453,9 +453,87 @@ class LinkedList {
         return (index >=0 && index < this.count)
     }
 }
+let ll = new LinkedList();
+ll.push(1);
+ll.push(2);
+ll.push(3);
+console.log('LinkedList:', ll.getEleAt(2));
 
 
+// 双向链表 prev|element|next
+class DoublyNode extends Node {
+    constructor(ele) {
+        super(ele);
+        this.prev;
+    }
+}
+class DoublyLinkedList extends LinkedList {
+    constructor(...rest) {
+        super(...rest);
+        this.tail; // 指向末尾节点
+    }
+    insert(ele, position) {
+        // 改进：如果position 大于 length/2，就最好从尾部开始迭代
+        if (index >=0 && index <= this.count) {
+            let node = new DoublyLinkedList(ele);
+            let cur = this.head;
+            if (position === 0) {
+                if (this.head == null) { // 链表为空时
+                    this.head = this.tail = node;
+                } else {
+                    cur.prev = node;
+                    node.next = cur;
+                    this.head = node;
+                }
+            } else if (position === this.count) { // 插入末尾
+                cur = this.tail;
+                cur.next = node;
+                node.prev = cur;
+                this.tail = node;
+            } else {
+                let next;
+                cur = this.getEleAt(position - 1);
+                next = cur.next;
+                cur.next = node;
+                node.prev = cur;
+                node.next = next;
+            }
+            this.count++;
+            return true;
+        }
+        return false;
+    }
+    removeAt(index) {
+        if (index >= 0 && index < this.count) {
+            let cur = this.head;
+            if (index === 0) {
+                if (this.count === 1) {
+                    this.head = this.tail = void(0);
+                } else {
+                    this.head = cur.next;
+                    this.head.prev = void(0);
+                }
+            } else if (index === (this.count - 1)) {
+                cur = this.tail;
+                this.tail = cur.prev;
+                this.tail.next = void(0);
+            } else {
+                cur = this.getEleAt(index);
+                let prev = cur.prev;
+                prev.next = cur.next;
+                cur.next.prev = prev;
+            }
+            this.count--;
+            return cur.ele;
+        }
+        return void(0);
+    }
+    // 其他方法：http://github.com/loiane/javascript-datastructures-algorithms
+}
 
+
+// 循环链表，last.next指向head
+// 双向循环链表，tail.next指向head,head.prev指向tail
 
 
 
